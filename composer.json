@@ -1,0 +1,24 @@
+{
+    "name": "jjgrainger/validation",
+    "autoload": {
+        "psr-4": {
+            "Validation\\": "src/"
+        }
+    },
+    "authors": [
+        {
+            "name": "jjgrainger",
+            "email": "github@jjgrainger.co.uk"
+        }
+    ],
+    "require-dev": {
+        "phpunit/phpunit": "^12.5",
+        "squizlabs/php_codesniffer": "^4.0",
+        "phpstan/phpstan": "^2.1"
+    },
+    "scripts": {
+        "phpcs": "phpcs --standard=psr2 src",
+        "phpunit": "phpunit --coverage-clover=coverage.xml",
+        "phpstan": "phpstan analyse --memory-limit=512M"
+    }
+}
