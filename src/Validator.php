@@ -2,6 +2,8 @@
 
 namespace Validation;
 
+use Validation\Rules\Signals\StopsOnFailure;
+
 class Validator
 {
     /**
@@ -51,6 +53,10 @@ class Validator
                     $attribute,
                     $this->formatter->format($rule->message(), $rule->name(), $attribute, $value)
                 );
+
+                if ($rule instanceof StopsOnFailure) {
+                    break;
+                }
             }
         }
 

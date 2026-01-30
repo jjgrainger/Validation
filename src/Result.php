@@ -44,6 +44,17 @@ class Result
     }
 
     /**
+     * Get messages for a key.
+     *
+     * @param string $key
+     * @return array
+     */
+    public function get(string $key): array
+    {
+        return $this->messages[$key] ?? [];
+    }
+
+    /**
      * Return the first message for a key.
      *
      * @param string $key
@@ -72,10 +83,10 @@ class Result
      * Return Results as JSON.
      *
      * @param integer $flag
-     * @return string
+     * @return string|false
      */
-    public function toJson(int $flag = 0): string
+    public function toJson(int $flag = 0, int $depth = 512): string|false
     {
-        return json_encode($this->toArray(), $flag);
+        return json_encode($this->toArray(), $flag, $depth);
     }
 }

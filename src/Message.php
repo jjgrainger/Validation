@@ -2,7 +2,9 @@
 
 namespace Validation;
 
-class Message
+use Validation\Contracts\MessageContract;
+
+class Message implements MessageContract
 {
     /**
      * The message template.

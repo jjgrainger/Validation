@@ -2,6 +2,8 @@
 
 namespace Validation;
 
+use Validation\Contracts\MessageContract;
+
 class Formatter
 {
     /**
@@ -34,12 +36,12 @@ class Formatter
     /**
      * Format the message.
      *
-     * @param Message $message
+     * @param MessageContract $message
      * @param string $key
      * @param string $attribute
      * @return string
      */
-    public function format(Message $message, string $key, string $attribute, mixed $value): string
+    public function format(MessageContract $message, string $key, string $attribute, mixed $value): string
     {
         $template = $this->messages[$attribute . '.' . $key] ?? $this->messages[$key] ?? $message->template();
 

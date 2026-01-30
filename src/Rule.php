@@ -2,7 +2,9 @@
 
 namespace Validation;
 
-abstract class Rule
+use Validation\Contracts\RuleContract;
+
+abstract class Rule implements RuleContract
 {
     /**
      * Validate input.
