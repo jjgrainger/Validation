@@ -2,6 +2,7 @@
 
 namespace Validation;
 
+use Validation\Rules\Signals\NeedsInput;
 use Validation\Rules\Signals\StopsOnFailure;
 
 class Validator
@@ -39,12 +40,17 @@ class Validator
      */
     public function validate(array $input): Result
     {
+        $input = new Input($input);
         $results = new Result;
 
         foreach ($this->rules as $attribute => $rules) {
-            $value = $input[$attribute] ?? null;
+            $value = $input->get($attribute);
 
             foreach ($rules as $rule) {
+                if ($rule instanceof NeedsInput) {
+                    $rule->setInput($input);
+                }
+
                 if ($rule->validate($value)) {
                     continue;
                 }

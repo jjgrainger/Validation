@@ -1,8 +1,10 @@
 <?php
 
 use PHPUnit\Framework\TestCase;
+use Validation\Contracts\InputContract;
 use Validation\Contracts\RuleContract;
 use Validation\Contracts\MessageContract;
+use Validation\Rules\Signals\NeedsInput;
 use Validation\Rules\Signals\StopsOnFailure;
 use Validation\Validator;
 
@@ -99,5 +101,26 @@ class ValidatorTest extends TestCase
 
         $this->assertTrue($result->fails());
         $this->assertCount(1, $result->get('test'));
+    }
+
+    public function test_it_can_pass_input_to_rules()
+    {
+        $needsInput = $this->createMockForIntersectionOfInterfaces([RuleContract::class, NeedsInput::class]);
+
+        $needsInput->expects($this->once())
+            ->method('setInput')
+            ->with($this->isInstanceOf(InputContract::class));
+
+        $rule = $this->createMock(RuleContract::class);
+
+        $rule->expects($this->once())
+            ->method('validate')
+            ->willReturn(true);
+
+        $validator = new Validator([
+            'test' => [$needsInput, $rule],
+        ]);
+
+        $validator->validate([]);
     }
 }

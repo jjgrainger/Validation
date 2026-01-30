@@ -2,6 +2,7 @@
 
 namespace Validation;
 
+use Validation\Contracts\MessageContract;
 use Validation\Contracts\RuleContract;
 
 abstract class Rule implements RuleContract
@@ -28,9 +29,9 @@ abstract class Rule implements RuleContract
     /**
      * Return the rule message.
      *
-     * @return Message
+     * @return MessageContract
      */
-    public function message(): Message
+    public function message(): MessageContract
     {
         return new Message('Invalid :attribute.');
     }
