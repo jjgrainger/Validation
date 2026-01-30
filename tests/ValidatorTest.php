@@ -7,7 +7,7 @@ use Validation\Validator;
 
 class ValidatorTest extends TestCase
 {
-    public function test_it_passes_the_correct_value_to_rules(): void
+    public function test_it_passes_the_correct_value_to_rules()
     {
         $rule = $this->createMock(Rule::class);
 
@@ -27,7 +27,25 @@ class ValidatorTest extends TestCase
         $this->assertTrue($result->passes());
     }
 
-    public function test_it_returns_errors_when_validation_fails()
+    public function test_it_does_not_add_messages_when_rules_pass()
+    {
+        $rule = $this->createMock(Rule::class);
+        $rule->expects($this->once())
+            ->method('validate')
+            ->willReturn(true);
+
+        $validator = new Validator([
+            'test' => [$rule]
+        ]);
+
+        $result = $validator->validate([
+            'test' => 'value'
+        ]);
+
+        $this->assertTrue($result->passes());
+    }
+
+    public function test_it_returns_messages_when_validation_fails()
     {
         $rule = $this->createMock(Rule::class);
 
@@ -39,12 +57,8 @@ class ValidatorTest extends TestCase
         $message = $this->createMock(Message::class);
 
         $message->expects($this->once())
-            ->method('setReplacement')
-            ->with(':attribute', 'test');
-
-        $message->expects($this->once())
-            ->method('build')
-            ->willReturn('Invalid test.');
+            ->method('template')
+            ->willReturn('Invalid :attribute.');
 
         $rule->expects($this->once())
             ->method('message')

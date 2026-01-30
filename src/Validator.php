@@ -12,13 +12,21 @@ class Validator
     protected $rules;
 
     /**
+     * Message Formatter
+     *
+     * @var Formatter
+     */
+    protected $formatter;
+
+    /**
      * Constructor.
      *
      * @param array $rules
      */
-    public function __construct(array $rules)
+    public function __construct(array $rules, array $messages = [], array $aliases = [])
     {
         $this->rules = $rules;
+        $this->formatter = new Formatter($messages, $aliases);
     }
 
     /**
@@ -32,15 +40,17 @@ class Validator
         $results = new Result;
 
         foreach ($this->rules as $attribute => $rules) {
+            $value = $input[$attribute] ?? null;
+
             foreach ($rules as $rule) {
-                if ($rule->validate($input[$attribute])) {
+                if ($rule->validate($value)) {
                     continue;
                 }
 
-                $message = $rule->message();
-                $message->setReplacement(':attribute', $attribute);
-
-                $results->add($attribute, $message->build());
+                $results->add(
+                    $attribute,
+                    $this->formatter->format($rule->message(), $rule->name(), $attribute, $value)
+                );
             }
         }
 

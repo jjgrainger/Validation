@@ -13,6 +13,17 @@ abstract class Rule
     abstract public function validate(mixed $value): bool;
 
     /**
+     * Return the rule name.
+     *
+     * @return string
+     */
+    public function name(): string
+    {
+        $parts = explode('\\', static::class);
+        return lcfirst(end($parts));
+    }
+
+    /**
      * Return the rule message.
      *
      * @return Message

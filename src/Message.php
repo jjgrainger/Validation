@@ -12,45 +12,41 @@ class Message
     protected $template;
 
     /**
-     * The message template replacements.
+     * The message template bindings.
      *
      * @var array
      */
-    protected $replacements;
+    protected $bindings;
 
     /**
      * Constructor.
      *
      * @param string $template
+     * @param array $bindings
      */
-    public function __construct(string $template)
+    public function __construct(string $template, array $bindings = [])
     {
         $this->template = $template;
+        $this->bindings = $bindings;
     }
 
     /**
-     * Set a replacement key and value.
-     *
-     * @param string $key
-     * @param string $value
-     * @return void
-     */
-    public function setReplacement(string $key, string $value): void
-    {
-        $this->replacements[$key] = $value;
-    }
-
-    /**
-     * Build the message.
+     * Return the message template.
      *
      * @return string
      */
-    public function build(): string
+    public function template(): string
     {
-        return str_replace(
-            array_keys($this->replacements),
-            array_values($this->replacements),
-            $this->template
-        );
+        return $this->template;
+    }
+
+    /**
+     * Return the message bindings.
+     *
+     * @return array
+     */
+    public function bindings(): array
+    {
+        return $this->bindings;
     }
 }
