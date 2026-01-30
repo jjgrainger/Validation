@@ -19,7 +19,7 @@ class ValidatorTest extends TestCase
             ->with('value')
             ->willReturn(true);
 
-        $validator = new Validator([
+        $validator = Validator::make([
             'test' => [$rule],
         ]);
 
@@ -37,7 +37,7 @@ class ValidatorTest extends TestCase
             ->method('validate')
             ->willReturn(true);
 
-        $validator = new Validator([
+        $validator = Validator::make([
             'test' => [$rule]
         ]);
 
@@ -67,7 +67,7 @@ class ValidatorTest extends TestCase
             ->method('message')
             ->willReturn($message);
 
-        $validator = new Validator([
+        $validator = Validator::make([
             'test' => [$rule],
         ]);
 
@@ -93,7 +93,7 @@ class ValidatorTest extends TestCase
         $bypassed->expects($this->never())
             ->method('validate');
 
-        $validator = new Validator([
+        $validator = Validator::make([
             'test' => [$required, $bypassed],
         ]);
 
@@ -117,7 +117,7 @@ class ValidatorTest extends TestCase
             ->method('validate')
             ->willReturn(true);
 
-        $validator = new Validator([
+        $validator = Validator::make([
             'test' => [$needsInput, $rule],
         ]);
 

@@ -2,8 +2,11 @@
 
 namespace Validation;
 
+use Validation\Contracts\FormatterContract;
+use Validation\Contracts\TranslatorContract;
 use Validation\Rules\Signals\NeedsInput;
 use Validation\Rules\Signals\StopsOnFailure;
+use Validation\Translator;
 
 class Validator
 {
@@ -25,11 +28,33 @@ class Validator
      * Constructor.
      *
      * @param array $rules
+     * @param FormatterContract $formatter
      */
-    public function __construct(array $rules, array $messages = [], array $aliases = [])
+    public function __construct(array $rules, FormatterContract $formatter)
     {
         $this->rules = $rules;
-        $this->formatter = new Formatter($messages, $aliases);
+        $this->formatter = $formatter;
+    }
+
+    /**
+     * Make a Validator.
+     *
+     * @param array $rules
+     * @param array $messages
+     * @param array $aliases
+     * @param TranslatorContract|null $translator
+     * @return self
+     */
+    public static function make(array $rules, array $messages = [], array $aliases = [], ?TranslatorContract $translator = null): self
+    {
+        return new self(
+            $rules,
+            new Formatter(
+                $messages,
+                $aliases,
+                $translator ?? new Translator
+            )
+        );
     }
 
     /**

@@ -2,9 +2,11 @@
 
 namespace Validation;
 
+use Validation\Contracts\FormatterContract;
 use Validation\Contracts\MessageContract;
+use Validation\Contracts\TranslatorContract;
 
-class Formatter
+class Formatter implements FormatterContract
 {
     /**
      * messages.
@@ -21,16 +23,24 @@ class Formatter
     protected $aliases;
 
     /**
+     * Translator.
+     *
+     * @var TranslatorContract
+     */
+    protected $translator;
+
+    /**
      * Constructor.
      *
      * @param array $messages
      * @param array $aliases
      * @param array $translations
      */
-    public function __construct(array $messages, array $aliases)
+    public function __construct(array $messages, array $aliases, TranslatorContract $translator)
     {
         $this->messages = $messages;
         $this->aliases = $aliases;
+        $this->translator = $translator;
     }
 
     /**
@@ -43,7 +53,9 @@ class Formatter
      */
     public function format(MessageContract $message, string $key, string $attribute, mixed $value): string
     {
-        $template = $this->messages[$attribute . '.' . $key] ?? $this->messages[$key] ?? $message->template();
+        $template = $this->translator->translate(
+            $this->messages[$attribute . '.' . $key] ?? $this->messages[$key] ?? $message->template()
+        );
 
         $bindings = array_merge(
             $message->bindings(),
