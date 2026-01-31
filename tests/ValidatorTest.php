@@ -5,6 +5,7 @@ use Validation\Contracts\InputContract;
 use Validation\Contracts\RuleContract;
 use Validation\Contracts\MessageContract;
 use Validation\Rules\Signals\NeedsInput;
+use Validation\Rules\Signals\SkipsOnFailure;
 use Validation\Rules\Signals\StopsOnFailure;
 use Validation\Validator;
 
@@ -101,6 +102,30 @@ class ValidatorTest extends TestCase
 
         $this->assertTrue($result->fails());
         $this->assertCount(1, $result->get('test'));
+    }
+
+    public function test_it_skips_on_failure_for_rule()
+    {
+        $required = $this->createMockForIntersectionOfInterfaces([RuleContract::class, SkipsOnFailure::class]);
+
+        $required->expects($this->once())
+            ->method('validate')
+            ->with(null)
+            ->willReturn(false);
+
+        $bypassed = $this->createMock(RuleContract::class);
+
+        $bypassed->expects($this->never())
+            ->method('validate');
+
+        $validator = Validator::make([
+            'test' => [$required, $bypassed],
+        ]);
+
+        $result = $validator->validate([]);
+
+        $this->assertTrue($result->passes());
+        $this->assertEmpty($result->get('test'));
     }
 
     public function test_it_can_pass_input_to_rules()

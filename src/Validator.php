@@ -5,6 +5,7 @@ namespace Validation;
 use Validation\Contracts\FormatterContract;
 use Validation\Contracts\TranslatorContract;
 use Validation\Rules\Signals\NeedsInput;
+use Validation\Rules\Signals\SkipsOnFailure;
 use Validation\Rules\Signals\StopsOnFailure;
 use Validation\Translator;
 
@@ -78,6 +79,10 @@ class Validator
 
                 if ($rule->validate($value)) {
                     continue;
+                }
+
+                if ($rule instanceof SkipsOnFailure) {
+                    break;
                 }
 
                 $results->add(
