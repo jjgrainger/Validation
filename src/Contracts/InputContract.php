@@ -4,5 +4,5 @@ namespace Validation\Contracts;
 
 interface InputContract
 {
-    public function get(string $key): mixed;
+    public function get(string $key, mixed $default = null): mixed;
 }

@@ -12,7 +12,3 @@ class Optional extends Rule implements SkipsOnFailure
         return ! empty($value);
     }
 }
-
-
-// if value is empty - we can't process other rules but we do not fail
-// if value exists - we can process other rules

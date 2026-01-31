@@ -2,71 +2,88 @@
 
 namespace Validation;
 
+use InvalidArgumentException;
 use Validation\Contracts\RuleContract;
+use Validation\Contracts\SchemaContract;
 use Validation\Exceptions\InvalidRuleException;
 
-class Schema
+class Schema implements SchemaContract
 {
-    private array $rules = [];
+    /**
+     * Validation schema.
+     *
+     * @var array
+     */
+    private array $schema = [];
 
     /**
      * Constructor.
      *
-     * @param array $ruleset
+     * @param array $schema
      */
-    public function __construct(array $ruleset)
+    public function __construct(array $schema)
     {
-        foreach ($ruleset as $attribute => $rules) {
-            $this->rules[$attribute] = $this->parse($rules);
-        }
+        $this->schema = $schema;
     }
 
     /**
-     * Return the rules array.
+     * Array of attributes to validate.
      *
-     * @return array
+     * @return string[]
      */
-    public function rules(): array
+    public function attributes(): array
     {
-        return $this->rules;
+        return array_keys($this->schema);
     }
 
     /**
-     * Parse rules to an array of RuleContract objects.
+     * Array of rules for an attribute.
      *
-     * @param string|array $rules
-     * @return array
+     * @param string $attribute
+     * @return RuleContract[]
      */
-    private function parse(string|array $rules): array
+    public function rules($attribute): array
     {
-        $parsed = [];
-        $rules = is_string($rules) ? explode('|', $rules) : $rules;
+        return $this->schema[$attribute] ?? [];
+    }
 
-        foreach ($rules as $rule) {
-            $rule = is_string($rule) ? $this->resolve($rule) : $rule;
+    /**
+     * Make a Schema from an array.
+     *
+     * @param array $definition
+     * @param Resolver $resolver
+     * @return self
+     */
+    public static function make(array $definition, Resolver $resolver): self
+    {
+        $schema = [];
 
-            if ($rule instanceof RuleContract) {
-                $parsed[] = $rule;
-                continue;
+        foreach ($definition as $attribute => $rules) {
+            if (! is_string($attribute)) {
+                throw new InvalidArgumentException("Schema attribute keys must be strings, got " . gettype($attribute));
             }
 
-            throw InvalidRuleException::invalidType($rule);
+            $schema[$attribute] = [];
+
+            $rules = is_string($rules) ? explode('|', $rules) : $rules;
+
+            foreach ($rules as $rule) {
+                if (is_string($rule)) {
+                    [$name, $params] = array_pad(explode(':', $rule), 2, null);
+                    $params = $params ? explode(',', $params) : [];
+
+                    $rule = $resolver->resolve($name, $params);
+                }
+
+                if ($rule instanceof RuleContract) {
+                    $schema[$attribute][] = $rule;
+                    continue;
+                }
+
+                throw InvalidRuleException::invalidType($rule);
+            }
         }
 
-        return $parsed;
-    }
-
-    /**
-     * Resolve named rule to RuleContract object.
-     *
-     * @param string $rule
-     * @return RuleContract
-     */
-    private function resolve(string $rule): RuleContract
-    {
-        [$name, $params] = array_pad(explode(':', $rule), 2, null);
-        $params = $params ? explode(',', $params) : [];
-
-        return Rules::make($name, $params);
+        return new Schema($schema);
     }
 }

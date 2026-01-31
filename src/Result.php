@@ -2,7 +2,9 @@
 
 namespace Validation;
 
-class Result
+use Validation\Contracts\ResultContract;
+
+class Result implements ResultContract
 {
     /**
      * Result messages.

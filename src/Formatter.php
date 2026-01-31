@@ -34,7 +34,7 @@ class Formatter implements FormatterContract
      *
      * @param array $messages
      * @param array $aliases
-     * @param array $translations
+     * @param TranslatorContract $translator
      */
     public function __construct(array $messages, array $aliases, TranslatorContract $translator)
     {

@@ -3,6 +3,9 @@
 namespace Validation;
 
 use Validation\Contracts\FormatterContract;
+use Validation\Contracts\InputContract;
+use Validation\Contracts\ResultContract;
+use Validation\Contracts\SchemaContract;
 use Validation\Contracts\TranslatorContract;
 use Validation\Rules\Signals\NeedsInput;
 use Validation\Rules\Signals\SkipsOnFailure;
@@ -14,24 +17,24 @@ class Validator
     /**
      * Validation schema.
      *
-     * @var Schema
+     * @var SchemaContract
      */
     protected $schema;
 
     /**
      * Message Formatter
      *
-     * @var Formatter
+     * @var FormatterContract
      */
     protected $formatter;
 
     /**
      * Constructor.
      *
-     * @param Schema $schema
+     * @param SchemaContract $schema
      * @param FormatterContract $formatter
      */
-    public function __construct(Schema $schema, FormatterContract $formatter)
+    public function __construct(SchemaContract $schema, FormatterContract $formatter)
     {
         $this->schema = $schema;
         $this->formatter = $formatter;
@@ -46,10 +49,17 @@ class Validator
      * @param TranslatorContract|null $translator
      * @return self
      */
-    public static function make(array $rules, array $messages = [], array $aliases = [], ?TranslatorContract $translator = null): self
-    {
+    public static function make(
+        array $rules,
+        array $messages = [],
+        array $aliases = [],
+        ?TranslatorContract $translator = null
+    ): self {
         return new self(
-            new Schema($rules),
+            Schema::make(
+                $rules,
+                new Resolver
+            ),
             new Formatter(
                 $messages,
                 $aliases,
@@ -61,18 +71,18 @@ class Validator
     /**
      * Validate input.
      *
-     * @param array $input
-     * @return Result
+     * @param array|InputContract $input
+     * @return ResultContract
      */
-    public function validate(array $input): Result
+    public function validate(array|InputContract $input, ?ResultContract $result = null): ResultContract
     {
-        $input = new Input($input);
-        $results = new Result;
+        $input = is_array($input) ? new Input($input) : $input;
+        $result = $result ?? new Result;
 
-        foreach ($this->schema->rules() as $attribute => $rules) {
+        foreach ($this->schema->attributes() as $attribute) {
             $value = $input->get($attribute);
 
-            foreach ($rules as $rule) {
+            foreach ($this->schema->rules($attribute) as $rule) {
                 if ($rule instanceof NeedsInput) {
                     $rule->setInput($input);
                 }
@@ -85,7 +95,7 @@ class Validator
                     break;
                 }
 
-                $results->add(
+                $result->add(
                     $attribute,
                     $this->formatter->format($rule->message(), $rule->name(), $attribute, $value)
                 );
@@ -96,6 +106,6 @@ class Validator
             }
         }
 
-        return $results;
+        return $result;
     }
 }

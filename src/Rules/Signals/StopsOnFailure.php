@@ -2,4 +2,7 @@
 
 namespace Validation\Rules\Signals;
 
-interface StopsOnFailure {}
+interface StopsOnFailure
+{
+
+}
