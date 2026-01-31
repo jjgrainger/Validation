@@ -12,11 +12,11 @@ use Validation\Translator;
 class Validator
 {
     /**
-     * Validation rules.
+     * Validation schema.
      *
-     * @var array
+     * @var Schema
      */
-    protected $rules;
+    protected $schema;
 
     /**
      * Message Formatter
@@ -28,12 +28,12 @@ class Validator
     /**
      * Constructor.
      *
-     * @param array $rules
+     * @param Schema $schema
      * @param FormatterContract $formatter
      */
-    public function __construct(array $rules, FormatterContract $formatter)
+    public function __construct(Schema $schema, FormatterContract $formatter)
     {
-        $this->rules = $rules;
+        $this->schema = $schema;
         $this->formatter = $formatter;
     }
 
@@ -49,7 +49,7 @@ class Validator
     public static function make(array $rules, array $messages = [], array $aliases = [], ?TranslatorContract $translator = null): self
     {
         return new self(
-            $rules,
+            new Schema($rules),
             new Formatter(
                 $messages,
                 $aliases,
@@ -69,7 +69,7 @@ class Validator
         $input = new Input($input);
         $results = new Result;
 
-        foreach ($this->rules as $attribute => $rules) {
+        foreach ($this->schema->rules() as $attribute => $rules) {
             $value = $input->get($attribute);
 
             foreach ($rules as $rule) {

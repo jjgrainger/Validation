@@ -106,9 +106,9 @@ class ValidatorTest extends TestCase
 
     public function test_it_skips_on_failure_for_rule()
     {
-        $required = $this->createMockForIntersectionOfInterfaces([RuleContract::class, SkipsOnFailure::class]);
+        $optional = $this->createMockForIntersectionOfInterfaces([RuleContract::class, SkipsOnFailure::class]);
 
-        $required->expects($this->once())
+        $optional->expects($this->once())
             ->method('validate')
             ->with(null)
             ->willReturn(false);
@@ -119,7 +119,7 @@ class ValidatorTest extends TestCase
             ->method('validate');
 
         $validator = Validator::make([
-            'test' => [$required, $bypassed],
+            'test' => [$optional, $bypassed],
         ]);
 
         $result = $validator->validate([]);
