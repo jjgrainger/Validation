@@ -9,6 +9,11 @@ class Optional extends Rule implements SkipsOnFailure
 {
     public function validate(mixed $value): bool
     {
-        return ! empty($value);
+        return ! is_null($value);
+    }
+
+    public function message(): never
+    {
+        throw new \LogicException('Optional does not produce messages.');
     }
 }

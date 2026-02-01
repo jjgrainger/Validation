@@ -12,7 +12,7 @@ class Between extends Rule
 
     protected $max;
 
-    public function __construct(int $min, int $max)
+    public function __construct(int|float $min, int|float $max)
     {
         $this->min = $min;
         $this->max = $max;
@@ -26,7 +26,7 @@ class Between extends Rule
     public function message(): MessageContract
     {
         return new Message(
-            ':attribute must be greater than :min and less than :max',
+            ':attribute must be greater than :min and less than :max.',
             [
                 ':min' => $this->min,
                 ':max' => $this->max,

@@ -27,7 +27,7 @@ class Same extends Rule implements NeedsInput
     public function message(): MessageContract
     {
         return new Message(
-            ':attribute must be the same as :other',
+            ':attribute must be the same as :other.',
             [
                 ':other' => $this->other,
             ]
