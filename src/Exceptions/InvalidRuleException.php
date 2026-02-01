@@ -17,6 +17,16 @@ class InvalidRuleException extends InvalidArgumentException
         );
     }
 
+    public static function missingName(string $rule): self
+    {
+        return new self(
+            sprintf(
+                'Validation rule "%s" is missing a name.',
+                $rule
+            )
+        );
+    }
+
     public static function invalidType(mixed $rule): self
     {
         return new self(

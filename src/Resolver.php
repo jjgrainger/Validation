@@ -17,10 +17,15 @@ class Resolver
     public function __construct()
     {
         $this->factories = [
-            'required' => fn () => new Rules\Required(),
-            'optional' => fn () => new Rules\Optional(),
-            'same' => fn ($other) => new Rules\Same($other),
+            'array' => fn () => new Rules\ArrayType(),
             'between' => fn ($min, $max) => new Rules\Between($min, $max),
+            'boolean' => fn () => new Rules\Boolean(),
+            'email' => fn () => new Rules\Email(),
+            'number' => fn () => new Rules\Number(),
+            'optional' => fn () => new Rules\Optional(),
+            'required' => fn () => new Rules\Required(),
+            'same' => fn ($other) => new Rules\Same($other),
+            'string' => fn () => new Rules\StringType(),
         ];
     }
 
@@ -28,13 +33,13 @@ class Resolver
      * Resolve to rule with name and params.
      *
      * @param string $name
-     * @param array $params
+     * @param mixed[] $params
      * @return RuleContract
      */
     public function resolve(string $name, array $params = []): RuleContract
     {
         $factory = $this->factories[$name] ?? throw InvalidRuleException::unknown($name);
 
-        return new $factory(...$params);
+        return $factory(...$params);
     }
 }

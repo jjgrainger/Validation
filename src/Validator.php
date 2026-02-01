@@ -43,9 +43,9 @@ class Validator
     /**
      * Make a Validator.
      *
-     * @param array $rules
-     * @param array $messages
-     * @param array $aliases
+     * @param array<string, mixed[]> $rules
+     * @param array<string, string> $messages
+     * @param array<string, string> $aliases
      * @param TranslatorContract|null $translator
      * @return self
      */
@@ -71,7 +71,7 @@ class Validator
     /**
      * Validate input.
      *
-     * @param array|InputContract $input
+     * @param array<string, mixed>|InputContract $input
      * @return ResultContract
      */
     public function validate(array|InputContract $input, ?ResultContract $result = null): ResultContract

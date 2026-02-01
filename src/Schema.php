@@ -12,14 +12,14 @@ class Schema implements SchemaContract
     /**
      * Validation schema.
      *
-     * @var array
+     * @var array<string, RuleContract[]>
      */
     private array $schema = [];
 
     /**
      * Constructor.
      *
-     * @param array $schema
+     * @param array<string, RuleContract[]> $schema
      */
     public function __construct(array $schema)
     {
@@ -50,7 +50,7 @@ class Schema implements SchemaContract
     /**
      * Make a Schema from an array.
      *
-     * @param array $definition
+     * @param mixed[] $definition
      * @param Resolver $resolver
      * @return self
      */
@@ -70,6 +70,11 @@ class Schema implements SchemaContract
             foreach ($rules as $rule) {
                 if (is_string($rule)) {
                     [$name, $params] = array_pad(explode(':', $rule), 2, null);
+
+                    if ($name === null || trim($name) === '') {
+                        throw InvalidRuleException::missingName($rule);
+                    }
+
                     $params = $params ? explode(',', $params) : [];
 
                     $rule = $resolver->resolve($name, $params);

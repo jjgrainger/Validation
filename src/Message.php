@@ -16,7 +16,7 @@ class Message implements MessageContract
     /**
      * The message template bindings.
      *
-     * @var array
+     * @var array<string, string>
      */
     protected $bindings;
 
@@ -24,7 +24,7 @@ class Message implements MessageContract
      * Constructor.
      *
      * @param string $template
-     * @param array $bindings
+     * @param array<string, mixed> $bindings
      */
     public function __construct(string $template, array $bindings = [])
     {
@@ -45,7 +45,7 @@ class Message implements MessageContract
     /**
      * Return the message bindings.
      *
-     * @return array
+     * @return array<string, mixed>
      */
     public function bindings(): array
     {

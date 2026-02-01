@@ -11,14 +11,14 @@ class Formatter implements FormatterContract
     /**
      * messages.
      *
-     * @var array
+     * @var array<string, string>
      */
     protected $messages;
 
     /**
      * aliases.
      *
-     * @var array
+     * @var array<string, string>
      */
     protected $aliases;
 
@@ -32,8 +32,8 @@ class Formatter implements FormatterContract
     /**
      * Constructor.
      *
-     * @param array $messages
-     * @param array $aliases
+     * @param array<string, string> $messages
+     * @param array<string, string> $aliases
      * @param TranslatorContract $translator
      */
     public function __construct(array $messages, array $aliases, TranslatorContract $translator)

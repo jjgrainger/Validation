@@ -8,9 +8,9 @@ use Validation\Rule;
 
 class Between extends Rule
 {
-    protected $min;
+    protected int|float $min;
 
-    protected $max;
+    protected int|float $max;
 
     public function __construct(int|float $min, int|float $max)
     {
@@ -18,7 +18,7 @@ class Between extends Rule
         $this->max = $max;
     }
 
-    public function validate($value): bool
+    public function validate(mixed $value): bool
     {
         return $value > $this->min && $value < $this->max;
     }

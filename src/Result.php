@@ -9,9 +9,9 @@ class Result implements ResultContract
     /**
      * Result messages.
      *
-     * @var array
+     * @var array<string, array<int, string>>
      */
-    protected $messages = [];
+    protected array $messages = [];
 
     /**
      * Validation passes.
@@ -49,7 +49,7 @@ class Result implements ResultContract
      * Get messages for a key.
      *
      * @param string $key
-     * @return array
+     * @return array<string>
      */
     public function get(string $key): array
     {
@@ -70,7 +70,7 @@ class Result implements ResultContract
     /**
      * Return Results as an array.
      *
-     * @return array
+     * @return array<string, mixed>
      */
     public function toArray(): array
     {
@@ -84,7 +84,8 @@ class Result implements ResultContract
     /**
      * Return Results as JSON.
      *
-     * @param integer $flag
+     * @param int $flag
+     * @param int<1, max> $depth
      * @return string|false
      */
     public function toJson(int $flag = 0, int $depth = 512): string|false
