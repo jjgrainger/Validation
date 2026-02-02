@@ -2,7 +2,7 @@
 
 namespace Validation\Contracts;
 
-interface SchemaContract
+interface SpecificationContract
 {
     /**
      * Array of attributes to validate.

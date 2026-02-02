@@ -4,10 +4,10 @@ namespace Validation;
 
 use InvalidArgumentException;
 use Validation\Contracts\RuleContract;
-use Validation\Contracts\SchemaContract;
+use Validation\Contracts\SpecificationContract;
 use Validation\Exceptions\InvalidRuleException;
 
-class Schema implements SchemaContract
+class Specification implements SpecificationContract
 {
     /**
      * Validation schema.
@@ -89,6 +89,6 @@ class Schema implements SchemaContract
             }
         }
 
-        return new Schema($schema);
+        return new Specification($schema);
     }
 }

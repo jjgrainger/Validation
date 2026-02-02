@@ -9,14 +9,14 @@ class Input implements InputContract
     /**
      * Input data.
      *
-     * @var array<string, mixed>
+     * @var array<mixed>
      */
     private array $items;
 
     /**
      * Constructor.
      *
-     * @param array<string, mixed> $input
+     * @param array<mixed> $input
      */
     public function __construct(array $input)
     {

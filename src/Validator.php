@@ -5,7 +5,7 @@ namespace Validation;
 use Validation\Contracts\FormatterContract;
 use Validation\Contracts\InputContract;
 use Validation\Contracts\ResultContract;
-use Validation\Contracts\SchemaContract;
+use Validation\Contracts\SpecificationContract;
 use Validation\Contracts\TranslatorContract;
 use Validation\Rules\Signals\NeedsInput;
 use Validation\Rules\Signals\SkipsOnFailure;
@@ -15,11 +15,11 @@ use Validation\Translator;
 class Validator
 {
     /**
-     * Validation schema.
+     * Validation Specification.
      *
-     * @var SchemaContract
+     * @var SpecificationContract
      */
-    protected $schema;
+    protected $specification;
 
     /**
      * Message Formatter
@@ -31,12 +31,12 @@ class Validator
     /**
      * Constructor.
      *
-     * @param SchemaContract $schema
+     * @param SpecificationContract $specification
      * @param FormatterContract $formatter
      */
-    public function __construct(SchemaContract $schema, FormatterContract $formatter)
+    public function __construct(SpecificationContract $specification, FormatterContract $formatter)
     {
-        $this->schema = $schema;
+        $this->specification = $specification;
         $this->formatter = $formatter;
     }
 
@@ -56,7 +56,7 @@ class Validator
         ?TranslatorContract $translator = null
     ): self {
         return new self(
-            Schema::make(
+            Specification::make(
                 $rules,
                 new Resolver
             ),
@@ -79,10 +79,10 @@ class Validator
         $input = is_array($input) ? new Input($input) : $input;
         $result = $result ?? new Result;
 
-        foreach ($this->schema->attributes() as $attribute) {
+        foreach ($this->specification->attributes() as $attribute) {
             $value = $input->get($attribute);
 
-            foreach ($this->schema->rules($attribute) as $rule) {
+            foreach ($this->specification->rules($attribute) as $rule) {
                 if ($rule instanceof NeedsInput) {
                     $rule->setInput($input);
                 }
