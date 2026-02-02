@@ -58,7 +58,7 @@ class Validator
         return new self(
             Specification::make(
                 $rules,
-                new Resolver
+                new Registry
             ),
             new Formatter(
                 $messages,

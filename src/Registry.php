@@ -2,10 +2,11 @@
 
 namespace Validation;
 
+use Validation\Contracts\RegistryContract;
 use Validation\Contracts\RuleContract;
 use Validation\Exceptions\InvalidRuleException;
 
-class Resolver
+class Registry implements RegistryContract
 {
     /**
      * Array of callables to create rules.

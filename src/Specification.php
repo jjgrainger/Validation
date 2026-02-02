@@ -3,6 +3,7 @@
 namespace Validation;
 
 use InvalidArgumentException;
+use Validation\Contracts\RegistryContract;
 use Validation\Contracts\RuleContract;
 use Validation\Contracts\SpecificationContract;
 use Validation\Exceptions\InvalidRuleException;
@@ -10,20 +11,20 @@ use Validation\Exceptions\InvalidRuleException;
 class Specification implements SpecificationContract
 {
     /**
-     * Validation schema.
+     * Validation specification.
      *
      * @var array<string, RuleContract[]>
      */
-    private array $schema = [];
+    private array $specification = [];
 
     /**
      * Constructor.
      *
-     * @param array<string, RuleContract[]> $schema
+     * @param array<string, RuleContract[]> $specification
      */
-    public function __construct(array $schema)
+    public function __construct(array $specification)
     {
-        $this->schema = $schema;
+        $this->specification = $specification;
     }
 
     /**
@@ -33,7 +34,7 @@ class Specification implements SpecificationContract
      */
     public function attributes(): array
     {
-        return array_keys($this->schema);
+        return array_keys($this->specification);
     }
 
     /**
@@ -42,19 +43,19 @@ class Specification implements SpecificationContract
      * @param string $attribute
      * @return RuleContract[]
      */
-    public function rules($attribute): array
+    public function rules(string $attribute): array
     {
-        return $this->schema[$attribute] ?? [];
+        return $this->specification[$attribute] ?? [];
     }
 
     /**
      * Make a Schema from an array.
      *
      * @param mixed[] $definition
-     * @param Resolver $resolver
+     * @param RegistryContract $resolver
      * @return self
      */
-    public static function make(array $definition, Resolver $resolver): self
+    public static function make(array $definition, RegistryContract $registry): self
     {
         $schema = [];
 
@@ -77,7 +78,7 @@ class Specification implements SpecificationContract
 
                     $params = $params ? explode(',', $params) : [];
 
-                    $rule = $resolver->resolve($name, $params);
+                    $rule = $registry->resolve($name, $params);
                 }
 
                 if ($rule instanceof RuleContract) {
