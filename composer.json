@@ -13,6 +13,9 @@
             "email": "github@jjgrainger.co.uk"
         }
     ],
+    "require": {
+        "php": "^8.2"
+    },
     "require-dev": {
         "phpunit/phpunit": "^12.5",
         "squizlabs/php_codesniffer": "^4.0",
