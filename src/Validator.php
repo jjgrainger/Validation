@@ -6,11 +6,9 @@ use Validation\Contracts\FormatterContract;
 use Validation\Contracts\InputContract;
 use Validation\Contracts\ResultContract;
 use Validation\Contracts\SpecificationContract;
-use Validation\Contracts\TranslatorContract;
 use Validation\Rules\Signals\NeedsInput;
 use Validation\Rules\Signals\SkipsOnFailure;
 use Validation\Rules\Signals\StopsOnFailure;
-use Validation\Translator;
 
 class Validator
 {
@@ -43,29 +41,15 @@ class Validator
     /**
      * Make a Validator.
      *
-     * @param array<string, mixed[]> $rules
-     * @param array<string, string> $messages
-     * @param array<string, string> $aliases
-     * @param TranslatorContract|null $translator
+     * @param array<string, mixed> $rules
+     * @param array<string, mixed> $config
      * @return self
      */
     public static function make(
         array $rules,
-        array $messages = [],
-        array $aliases = [],
-        ?TranslatorContract $translator = null
+        array $config = [],
     ): self {
-        return new self(
-            Specification::make(
-                $rules,
-                new Registry
-            ),
-            new Formatter(
-                $messages,
-                $aliases,
-                $translator ?? new Translator
-            )
-        );
+        return Factory::makeValidator(new Configuration($rules, $config));
     }
 
     /**
