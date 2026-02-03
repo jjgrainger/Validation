@@ -1,5 +1,7 @@
 {
     "name": "jjgrainger/validation",
+    "description": "Extensible PHP validation",
+    "license": "MIT",
     "autoload": {
         "psr-4": {
             "Validation\\": "src/"
