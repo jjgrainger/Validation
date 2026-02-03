@@ -22,6 +22,6 @@
         "phpcs": "phpcs --standard=psr2 src",
         "phpstan": "phpstan analyse --memory-limit=512M",
         "phpunit": "phpunit",
-        "phpunit:coverage": "./vendor/bin/phpunit --coverage-clover=coverage.xml",
+        "phpunit:coverage": "./vendor/bin/phpunit --coverage-clover=coverage.xml"
     }
 }
