@@ -1,5 +1,8 @@
 # Validation
 
+[![Tests](https://github.com/jjgrainger/Validation/actions/workflows/test.yml/badge.svg)](https://github.com/jjgrainger/Validation/actions/workflows/test.yml) [![codecov](https://codecov.io/gh/jjgrainger/Validation/graph/badge.svg?token=44C6GE576O)](https://codecov.io/gh/jjgrainger/Validation) [![Latest Stable Version](https://badgen.net/github/release/jjgrainger/Validation/stable)](https://packagist.org/packages/jjgrainger/Validation) [![Total Downloads](https://badgen.net/packagist/dt/jjgrainger/Validation)](https://packagist.org/packages/jjgrainger/Validation) [![License](https://badgen.net/github/license/jjgrainger/Validation)](https://packagist.org/packages/jjgrainger/Validation)
+
+
 > Extensible PHP validation
 
 Work in progress...
