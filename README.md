@@ -5,7 +5,7 @@ Work in progress...
 ```php
 use Validation\Validator;
 
-// Creat a Validator with an array of attributes and rules to validate against.
+// Create a Validator with an array of attributes and rules to validate against.
 $validator = Validator::make([
     'name' => 'required',
     'email' => 'required|email',

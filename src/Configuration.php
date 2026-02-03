@@ -3,7 +3,7 @@
 namespace Validation;
 
 use Validation\Contracts\ConfigurationContract;
-use Validation\Contracts\RegistryContract;
+use Validation\Contracts\ProviderContract;
 use Validation\Contracts\ResolverContract;
 use Validation\Contracts\TranslatorContract;
 
@@ -40,9 +40,9 @@ class Configuration implements ConfigurationContract
     /**
      * Registry
      *
-     * @var RegistryContract|null
+     * @var ProviderContract[]
      */
-    protected $registry;
+    protected $providers;
 
     /**
      * Resolver
@@ -63,7 +63,7 @@ class Configuration implements ConfigurationContract
         $this->messages = $config['messages'] ?? [];
         $this->aliases = $config['aliases'] ?? [];
         $this->translator = $config['translator'] ?? null;
-        $this->registry = $config['registry'] ?? null;
+        $this->providers = $config['providers'] ?? [];
         $this->resolver = $config['resolver'] ?? null;
     }
 
@@ -110,11 +110,11 @@ class Configuration implements ConfigurationContract
     /**
      * Registry
      *
-     * @return RegistryContract|null
+     * @return ProviderContract[]
      */
-    public function registry(): ?RegistryContract
+    public function providers(): array
     {
-        return $this->registry;
+        return $this->providers;
     }
 
     /**

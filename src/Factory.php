@@ -8,6 +8,7 @@ use Validation\Contracts\RegistryContract;
 use Validation\Contracts\ResolverContract;
 use Validation\Contracts\SpecificationContract;
 use Validation\Contracts\TranslatorContract;
+use Validation\Providers\CoreRulesProvider;
 
 class Factory
 {
@@ -33,10 +34,11 @@ class Factory
      */
     public static function makeSpecification(ConfigurationContract $config): SpecificationContract
     {
+        $registry = self::makeRegistry($config);
         $resolver = self::makeResolver($config);
 
         return new Specification(
-            $resolver->resolve($config->rules())
+            $resolver->resolve($config->rules(), $registry)
         );
     }
 
@@ -74,7 +76,18 @@ class Factory
      */
     public static function makeRegistry(ConfigurationContract $config): RegistryContract
     {
-        return $config->registry() ?? new Registry();
+        $registry = new Registry;
+
+        $providers = [
+            new CoreRulesProvider,
+            ...$config->providers()
+        ];
+
+        foreach ($providers as $provider) {
+            $provider->register($registry);
+        }
+
+        return $registry;
     }
 
     /**
@@ -85,6 +98,6 @@ class Factory
      */
     public static function makeResolver(ConfigurationContract $config): ResolverContract
     {
-        return $config->resolver() ?? new Resolver(self::makeRegistry($config));
+        return $config->resolver() ?? new Resolver();
     }
 }

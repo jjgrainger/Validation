@@ -33,11 +33,11 @@ interface ConfigurationContract
     public function translator(): ?TranslatorContract;
 
     /**
-     * Registry
+     * Providers
      *
-     * @return RegistryContract|null
+     * @return ProviderContract[]
      */
-    public function registry(): ?RegistryContract;
+    public function providers(): array;
 
     /**
      * Resolver.

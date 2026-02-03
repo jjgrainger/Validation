@@ -5,10 +5,11 @@ namespace Validation\Contracts;
 interface ResolverContract
 {
     /**
-     * Returns the resolved rules array.
+     * Resolve rules array.
      *
      * @param array<string, mixed> $rules
+     * @param RegistryContract $registry
      * @return array<string, RuleContract[]>
      */
-    public function resolve(array $rules): array;
+    public function resolve(array $rules, RegistryContract $registry): array;
 }

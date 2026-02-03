@@ -13,21 +13,18 @@ class Registry implements RegistryContract
      *
      * @var array<string, callable>
      */
-    private array $factories;
+    private array $bindings = [];
 
-    public function __construct()
+    /**
+     * Add a rule to the Registry.
+     *
+     * @param string $name
+     * @param callable $callback
+     * @return void
+     */
+    public function add(string $name, callable $callback): void
     {
-        $this->factories = [
-            'array' => fn () => new Rules\ArrayType(),
-            'between' => fn ($min, $max) => new Rules\Between($min, $max),
-            'boolean' => fn () => new Rules\Boolean(),
-            'email' => fn () => new Rules\Email(),
-            'number' => fn () => new Rules\Number(),
-            'optional' => fn () => new Rules\Optional(),
-            'required' => fn () => new Rules\Required(),
-            'same' => fn ($other) => new Rules\Same($other),
-            'string' => fn () => new Rules\StringType(),
-        ];
+        $this->bindings[$name] = $callback;
     }
 
     /**
@@ -39,7 +36,7 @@ class Registry implements RegistryContract
      */
     public function resolve(string $name, array $params = []): RuleContract
     {
-        $factory = $this->factories[$name] ?? throw InvalidRuleException::unknown($name);
+        $factory = $this->bindings[$name] ?? throw InvalidRuleException::unknown($name);
 
         return $factory(...$params);
     }

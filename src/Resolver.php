@@ -10,29 +10,13 @@ use Validation\Exceptions\InvalidRuleException;
 class Resolver implements ResolverContract
 {
     /**
-     * Registry
-     *
-     * @var RegistryContract
-     */
-    protected $registry;
-
-    /**
-     * Constructor.
-     *
-     * @param RegistryContract $registry
-     */
-    public function __construct(RegistryContract $registry)
-    {
-        $this->registry = $registry;
-    }
-
-    /**
      * Resolve rules array for Specification.
      *
      * @param array<string, mixed> $rules
+     * @param RegistryContract $registry
      * @return array<string, RuleContract[]>
      */
-    public function resolve(array $rules): array
+    public function resolve(array $rules, RegistryContract $registry): array
     {
         $resolved = [];
 
@@ -51,7 +35,7 @@ class Resolver implements ResolverContract
 
                     $params = $params ? explode(',', $params) : [];
 
-                    $rule = $this->registry->resolve($name, $params);
+                    $rule = $registry->resolve($name, $params);
                 }
 
                 if ($rule instanceof RuleContract) {
