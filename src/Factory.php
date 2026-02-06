@@ -6,6 +6,7 @@ use Validation\Contracts\ConfigurationContract;
 use Validation\Contracts\FormatterContract;
 use Validation\Contracts\RegistryContract;
 use Validation\Contracts\ResolverContract;
+use Validation\Contracts\RuleContract;
 use Validation\Contracts\StrategyContract;
 use Validation\Contracts\TranslatorContract;
 use Validation\Providers\CoreRulesProvider;
@@ -27,23 +28,20 @@ class Factory
     }
 
     /**
-     * Build the Specification (attributes + rules + policy) from the config.
+     * Make the Validation Strategy from the config.
      *
      * @param ConfigurationContract $config
      * @return StrategyContract
      */
     public static function makeStrategy(ConfigurationContract $config): StrategyContract
     {
-        $registry = self::makeRegistry($config);
-        $resolver = self::makeResolver($config);
-
         return new Strategy(
-            $resolver->resolve($config->rules(), $registry)
+            self::makePlan($config)
         );
     }
 
     /**
-     * Build the Formatter (messages, aliases, translator) from the config.
+     * Make the Formatter (messages, aliases, translator) from the config.
      *
      * @param ConfigurationContract $config
      * @return FormatterContract
@@ -58,7 +56,21 @@ class Factory
     }
 
     /**
-     * Build the Translator (use config or default).
+     * Make a validation plan from configuration.
+     *
+     * @param ConfigurationContract $config
+     * @return array<string, RuleContract[]>
+     */
+    public static function makePlan(ConfigurationContract $config): array
+    {
+        $registry = self::makeRegistry($config);
+        $resolver = self::makeResolver($config);
+
+        return $resolver->resolve($config->rules(), $registry);
+    }
+
+    /**
+     * Make the Translator (use config or default).
      *
      * @param ConfigurationContract $config
      * @return TranslatorContract
@@ -69,7 +81,7 @@ class Factory
     }
 
     /**
-     * Build the Registry (use config or default).
+     * Make the Registry and apply Providers.
      *
      * @param ConfigurationContract $config
      * @return RegistryContract
@@ -91,7 +103,7 @@ class Factory
     }
 
     /**
-     * Build the Resolver (use config or default).
+     * Make the Resolver (use config or default).
      *
      * @param ConfigurationContract $config
      * @return ResolverContract
