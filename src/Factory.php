@@ -5,7 +5,6 @@ namespace Validation;
 use Validation\Contracts\ConfigurationContract;
 use Validation\Contracts\FormatterContract;
 use Validation\Contracts\RegistryContract;
-use Validation\Contracts\ResolverContract;
 use Validation\Contracts\RuleContract;
 use Validation\Contracts\StrategyContract;
 use Validation\Contracts\TranslatorContract;
