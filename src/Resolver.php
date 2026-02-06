@@ -21,6 +21,8 @@ class Resolver implements ResolverContract
         $resolved = [];
 
         foreach ($rules as $attribute => $ruleset) {
+            $attribute = Selector::make($attribute)->toString();
+
             $resolved[$attribute] = [];
 
             $ruleset = is_string($ruleset) ? explode('|', $ruleset) : $ruleset;
