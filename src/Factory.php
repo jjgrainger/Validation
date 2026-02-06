@@ -5,8 +5,8 @@ namespace Validation;
 use Validation\Contracts\ConfigurationContract;
 use Validation\Contracts\FormatterContract;
 use Validation\Contracts\RegistryContract;
-use Validation\Contracts\ResolverContract;
-use Validation\Contracts\SpecificationContract;
+use Validation\Contracts\RuleContract;
+use Validation\Contracts\StrategyContract;
 use Validation\Contracts\TranslatorContract;
 use Validation\Providers\CoreRulesProvider;
 
@@ -21,29 +21,26 @@ class Factory
     public static function makeValidator(ConfigurationContract $config): Validator
     {
         return new Validator(
-            self::makeSpecification($config),
+            self::makeStrategy($config),
             self::makeFormatter($config)
         );
     }
 
     /**
-     * Build the Specification (attributes + rules + policy) from the config.
+     * Make the Validation Strategy from the config.
      *
      * @param ConfigurationContract $config
-     * @return SpecificationContract
+     * @return StrategyContract
      */
-    public static function makeSpecification(ConfigurationContract $config): SpecificationContract
+    public static function makeStrategy(ConfigurationContract $config): StrategyContract
     {
-        $registry = self::makeRegistry($config);
-        $resolver = self::makeResolver($config);
-
-        return new Specification(
-            $resolver->resolve($config->rules(), $registry)
+        return new Strategy(
+            self::makePlan($config)
         );
     }
 
     /**
-     * Build the Formatter (messages, aliases, translator) from the config.
+     * Make the Formatter (messages, aliases, translator) from the config.
      *
      * @param ConfigurationContract $config
      * @return FormatterContract
@@ -58,7 +55,18 @@ class Factory
     }
 
     /**
-     * Build the Translator (use config or default).
+     * Make a validation plan from configuration.
+     *
+     * @param ConfigurationContract $config
+     * @return array<string, RuleContract[]>
+     */
+    public static function makePlan(ConfigurationContract $config): array
+    {
+        return self::makeInterpreter($config)->createPlan($config->rules());
+    }
+
+    /**
+     * Make the Translator (use config or default).
      *
      * @param ConfigurationContract $config
      * @return TranslatorContract
@@ -69,7 +77,7 @@ class Factory
     }
 
     /**
-     * Build the Registry (use config or default).
+     * Make the Registry and apply Providers.
      *
      * @param ConfigurationContract $config
      * @return RegistryContract
@@ -91,13 +99,15 @@ class Factory
     }
 
     /**
-     * Build the Resolver (use config or default).
+     * Make the Interpreter.
      *
      * @param ConfigurationContract $config
-     * @return ResolverContract
+     * @return Interpreter
      */
-    public static function makeResolver(ConfigurationContract $config): ResolverContract
+    public static function makeInterpreter(ConfigurationContract $config): Interpreter
     {
-        return $config->resolver() ?? new Resolver();
+        return new Interpreter(
+            self::makeRegistry($config)
+        );
     }
 }
