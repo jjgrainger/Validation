@@ -5,7 +5,7 @@ namespace Validation;
 use Validation\Contracts\FormatterContract;
 use Validation\Contracts\InputContract;
 use Validation\Contracts\ResultContract;
-use Validation\Contracts\SpecificationContract;
+use Validation\Contracts\StrategyContract;
 use Validation\Rules\Signals\NeedsInput;
 use Validation\Rules\Signals\SkipsOnFailure;
 use Validation\Rules\Signals\StopsOnFailure;
@@ -13,11 +13,11 @@ use Validation\Rules\Signals\StopsOnFailure;
 class Validator
 {
     /**
-     * Validation Specification.
+     * Validation Strategy.
      *
-     * @var SpecificationContract
+     * @var StrategyContract
      */
-    protected $specification;
+    protected $strategy;
 
     /**
      * Message Formatter
@@ -29,12 +29,12 @@ class Validator
     /**
      * Constructor.
      *
-     * @param SpecificationContract $specification
+     * @param StrategyContract $strategy
      * @param FormatterContract $formatter
      */
-    public function __construct(SpecificationContract $specification, FormatterContract $formatter)
+    public function __construct(StrategyContract $strategy, FormatterContract $formatter)
     {
-        $this->specification = $specification;
+        $this->strategy = $strategy;
         $this->formatter = $formatter;
     }
 
@@ -62,11 +62,11 @@ class Validator
         $input = $this->prepareInput($input);
         $result = $this->prepareResult($result);
 
-        foreach ($this->specification->attributes() as $selector) {
+        foreach ($this->strategy->selectors() as $selector) {
             $values = $input->values($selector);
 
             foreach ($values as $attribute => $value) {
-                foreach ($this->specification->rules($selector) as $rule) {
+                foreach ($this->strategy->rules($selector) as $rule) {
                     if ($rule instanceof NeedsInput) {
                         $rule->setInput($input);
                     }
@@ -104,7 +104,7 @@ class Validator
     {
         $input = $input instanceof InputContract ? $input : new Input($input);
 
-        $input->index($this->specification->attributes());
+        $input->index($this->strategy->selectors());
 
         return $input;
     }

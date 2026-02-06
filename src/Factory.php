@@ -6,7 +6,7 @@ use Validation\Contracts\ConfigurationContract;
 use Validation\Contracts\FormatterContract;
 use Validation\Contracts\RegistryContract;
 use Validation\Contracts\ResolverContract;
-use Validation\Contracts\SpecificationContract;
+use Validation\Contracts\StrategyContract;
 use Validation\Contracts\TranslatorContract;
 use Validation\Providers\CoreRulesProvider;
 
@@ -21,7 +21,7 @@ class Factory
     public static function makeValidator(ConfigurationContract $config): Validator
     {
         return new Validator(
-            self::makeSpecification($config),
+            self::makeStrategy($config),
             self::makeFormatter($config)
         );
     }
@@ -30,14 +30,14 @@ class Factory
      * Build the Specification (attributes + rules + policy) from the config.
      *
      * @param ConfigurationContract $config
-     * @return SpecificationContract
+     * @return StrategyContract
      */
-    public static function makeSpecification(ConfigurationContract $config): SpecificationContract
+    public static function makeStrategy(ConfigurationContract $config): StrategyContract
     {
         $registry = self::makeRegistry($config);
         $resolver = self::makeResolver($config);
 
-        return new Specification(
+        return new Strategy(
             $resolver->resolve($config->rules(), $registry)
         );
     }
