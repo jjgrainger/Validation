@@ -11,7 +11,14 @@ class Input implements InputContract
      *
      * @var array<mixed>
      */
-    private array $items;
+    private array $input;
+
+    /**
+     * Index of values for selectors.
+     *
+     * @var array<string, mixed>
+     */
+    private array $index;
 
     /**
      * Constructor.
@@ -20,11 +27,11 @@ class Input implements InputContract
      */
     public function __construct(array $input)
     {
-        $this->items = $input;
+        $this->input = $input;
     }
 
     /**
-     * Get value from input data.
+     * Get a single value from index data by attribute (not selector).
      *
      * @param string $attribute
      * @param mixed $default
@@ -32,6 +39,37 @@ class Input implements InputContract
      */
     public function get(string $attribute, mixed $default = null): mixed
     {
-        return $this->items[$attribute] ?? $default;
+        return $this->index[$attribute] ?? $default;
+    }
+
+    /**
+     * Return an array of values for a selector.
+     *
+     * @param string $selector
+     * @return array<string, mixed>
+     */
+    public function values(string $selector): array
+    {
+        return Selector::make($selector)->filter($this->index);
+    }
+
+    /**
+     * Build an flat index of resolved selectors and their values.
+     *
+     * @param string[] $selectors
+     * @return void
+     */
+    public function index(array $selectors): void
+    {
+        $result = [];
+
+        foreach ($selectors as $selector) {
+            $result = array_merge(
+                $result,
+                Selector::make($selector)->expand($this->input)
+            );
+        }
+
+        $this->index = $result;
     }
 }

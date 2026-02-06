@@ -49,11 +49,13 @@ class Result implements ResultContract
      * Get messages for a key.
      *
      * @param string $key
-     * @return array<string>
+     * @return string[]
      */
     public function get(string $key): array
     {
-        return $this->messages[$key] ?? [];
+        $matched = Selector::make($key)->filter($this->messages);
+
+        return array_merge(...array_values($matched)) ?: [];
     }
 
     /**
@@ -64,7 +66,17 @@ class Result implements ResultContract
      */
     public function first(string $key): ?string
     {
-        return $this->messages[$key][0] ?? null;
+        return $this->get($key)[0] ?? null;
+    }
+
+    /**
+     * Returns all messages.
+     *
+     * @return array<string, array<int, string>>
+     */
+    public function all(): array
+    {
+        return $this->messages;
     }
 
     /**
