@@ -53,11 +53,11 @@ class Validator
     /**
      * Validate input.
      *
-     * @param array<string, mixed>|InputContract $input
+     * @param InputContract|array<string, mixed> $input
      * @param ?ResultContract $result
      * @return ResultContract
      */
-    public function validate(array|InputContract $input, ?ResultContract $result = null): ResultContract
+    public function validate(InputContract|array $input, ?ResultContract $result = null): ResultContract
     {
         $input = $this->prepareInput($input);
         $result = $this->prepareResult($result);
@@ -97,10 +97,10 @@ class Validator
     /**
      * Prepate Input for validation.
      *
-     * @param array|InputContract $input
+     * @param InputContract|array<string, mixed> $input
      * @return InputContract
      */
-    private function prepareInput(array|InputContract $input): InputContract
+    private function prepareInput(InputContract|array $input): InputContract
     {
         $input = $input instanceof InputContract ? $input : new Input($input);
 
