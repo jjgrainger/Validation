@@ -62,7 +62,7 @@ class Factory
      */
     public static function makePlan(ConfigurationContract $config): array
     {
-        return self::makeResolver($config)->resolve($config->rules());
+        return self::makeInterpreter($config)->createPlan($config->rules());
     }
 
     /**
@@ -99,14 +99,14 @@ class Factory
     }
 
     /**
-     * Make the Resolver (use config or default).
+     * Make the Interpreter.
      *
      * @param ConfigurationContract $config
-     * @return Resolver
+     * @return Interpreter
      */
-    public static function makeResolver(ConfigurationContract $config): Resolver
+    public static function makeInterpreter(ConfigurationContract $config): Interpreter
     {
-        return new Resolver(
+        return new Interpreter(
             self::makeRegistry($config)
         );
     }

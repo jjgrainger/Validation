@@ -7,7 +7,7 @@ use Validation\Contracts\RuleContract;
 use Validation\Exceptions\InvalidRuleException;
 use Validation\Exceptions\InvalidRulesetException;
 
-class Resolver
+class Interpreter
 {
     /**
      * Rule Registry.
@@ -32,7 +32,7 @@ class Resolver
      * @param array<string, mixed> $rules
      * @return array<string, RuleContract[]>
      */
-    public function resolve(array $rules): array
+    public function createPlan(array $rules): array
     {
         $plan = [];
 
