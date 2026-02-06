@@ -63,10 +63,7 @@ class Factory
      */
     public static function makePlan(ConfigurationContract $config): array
     {
-        $registry = self::makeRegistry($config);
-        $resolver = self::makeResolver($config);
-
-        return $resolver->resolve($config->rules(), $registry);
+        return self::makeResolver($config)->resolve($config->rules());
     }
 
     /**
@@ -106,10 +103,12 @@ class Factory
      * Make the Resolver (use config or default).
      *
      * @param ConfigurationContract $config
-     * @return ResolverContract
+     * @return Resolver
      */
-    public static function makeResolver(ConfigurationContract $config): ResolverContract
+    public static function makeResolver(ConfigurationContract $config): Resolver
     {
-        return $config->resolver() ?? new Resolver();
+        return new Resolver(
+            self::makeRegistry($config)
+        );
     }
 }

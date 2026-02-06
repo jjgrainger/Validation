@@ -38,11 +38,4 @@ interface ConfigurationContract
      * @return ProviderContract[]
      */
     public function providers(): array;
-
-    /**
-     * Resolver.
-     *
-     * @return ResolverContract|null
-     */
-    public function resolver(): ?ResolverContract;
 }

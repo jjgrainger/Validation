@@ -45,14 +45,7 @@ class Configuration implements ConfigurationContract
     protected $providers;
 
     /**
-     * Resolver
-     *
-     * @var ResolverContract|null
-     */
-    protected $resolver;
-
-    /**
-     * constructor
+     * Constructor.
      *
      * @param array<string, mixed> $rules
      * @param array<string, mixed> $config
@@ -64,7 +57,6 @@ class Configuration implements ConfigurationContract
         $this->aliases = $config['aliases'] ?? [];
         $this->translator = $config['translator'] ?? null;
         $this->providers = $config['providers'] ?? [];
-        $this->resolver = $config['resolver'] ?? null;
     }
 
     /**
@@ -98,7 +90,7 @@ class Configuration implements ConfigurationContract
     }
 
     /**
-     * Translator
+     * Translator.
      *
      * @return TranslatorContract|null
      */
@@ -108,22 +100,12 @@ class Configuration implements ConfigurationContract
     }
 
     /**
-     * Registry
+     * Providers.
      *
      * @return ProviderContract[]
      */
     public function providers(): array
     {
         return $this->providers;
-    }
-
-    /**
-     * Resolver
-     *
-     * @return ResolverContract|null
-     */
-    public function resolver(): ?ResolverContract
-    {
-        return $this->resolver;
     }
 }
