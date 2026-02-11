@@ -10,8 +10,19 @@ use Validation\Rules\Signals\RequiresParameters;
 
 class NotIn extends Rule implements RequiresParameters
 {
+    /**
+     * Disallowed enum.
+     *
+     * @var string[]
+     */
     private array $disallowed;
 
+    /**
+     * Set parameters
+     *
+     * @param mixed[] $parameters
+     * @return void
+     */
     public function setParameters(array $parameters): void
     {
         if (empty($parameters)) {

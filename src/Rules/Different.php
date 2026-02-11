@@ -14,8 +14,14 @@ class Different extends Rule implements RequiresInput, RequiresParameters
 {
     use WithInput;
 
-    private readonly string $other;
+    private string $other;
 
+    /**
+     * Set parameters
+     *
+     * @param mixed[] $parameters
+     * @return void
+     */
     public function setParameters(array $parameters): void
     {
         $this->other = $parameters[0] ?? throw InvalidRuleException::missingParameter($this->name(), 'other');

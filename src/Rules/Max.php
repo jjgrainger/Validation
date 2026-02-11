@@ -10,8 +10,14 @@ use Validation\Rules\Signals\RequiresParameters;
 
 class Max extends Rule implements RequiresParameters
 {
-    private readonly int|float $max;
+    private int|float $max;
 
+    /**
+     * Set parameters
+     *
+     * @param mixed[] $parameters
+     * @return void
+     */
     public function setParameters(array $parameters): void
     {
         $this->max = $parameters[0] ?? throw InvalidRuleException::missingParameter($this->name(), 'max');

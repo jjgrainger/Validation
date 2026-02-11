@@ -10,8 +10,14 @@ use Validation\Rules\Signals\RequiresParameters;
 
 class Length extends Rule implements RequiresParameters
 {
-    private readonly int $length;
+    private int $length;
 
+    /**
+     * Set parameters
+     *
+     * @param mixed[] $parameters
+     * @return void
+     */
     public function setParameters(array $parameters): void
     {
         $this->length = $parameters[0] ?? throw InvalidRuleException::missingParameter($this->name(), 'length');

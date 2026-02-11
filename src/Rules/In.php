@@ -10,8 +10,19 @@ use Validation\Rules\Signals\RequiresParameters;
 
 class In extends Rule implements RequiresParameters
 {
+    /**
+     * Allowed enum.
+     *
+     * @var string[]
+     */
     private array $allowed;
 
+    /**
+     * Set parameters
+     *
+     * @param mixed[] $parameters
+     * @return void
+     */
     public function setParameters(array $parameters): void
     {
         if (empty($parameters)) {
