@@ -9,6 +9,10 @@ class ConstraintRulesProvider implements ProviderContract
 {
     public function register(RegistryContract $registry): void
     {
+        $registry->add('accepted', function () {
+            return new \Validation\Rules\Accepted();
+        });
+
         $registry->add('between', function () {
             return new \Validation\Rules\Between();
         });
@@ -17,12 +21,24 @@ class ConstraintRulesProvider implements ProviderContract
             return new \Validation\Rules\Email();
         });
 
-        $registry->add('max', function ($max) {
-            return new \Validation\Rules\Max($max);
+        $registry->add('in', function () {
+            return new \Validation\Rules\In();
+        });
+
+        $registry->add('max', function () {
+            return new \Validation\Rules\Max();
         });
 
         $registry->add('min', function ($min) {
-            return new \Validation\Rules\Min($min);
+            return new \Validation\Rules\Min();
+        });
+
+        $registry->add('notin', function () {
+            return new \Validation\Rules\In();
+        });
+
+        $registry->add('url', function () {
+            return new \Validation\Rules\Url();
         });
     }
 }
