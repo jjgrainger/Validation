@@ -9,8 +9,8 @@ class ComparisonRulesProvider implements ProviderContract
 {
     public function register(RegistryContract $registry): void
     {
-        $registry->add('same', function ($other) {
-            return new \Validation\Rules\Same($other);
+        $registry->add('same', function () {
+            return new \Validation\Rules\Same();
         });
     }
 }

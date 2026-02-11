@@ -3,19 +3,21 @@
 namespace Validation\Rules;
 
 use Validation\Contracts\MessageContract;
+use Validation\Exceptions\InvalidRuleException;
 use Validation\Message;
 use Validation\Rule;
+use Validation\Rules\Signals\AcceptsParameters;
 
-class Between extends Rule
+class Between extends Rule implements AcceptsParameters
 {
-    protected int|float $min;
+    private readonly int|float $min;
 
-    protected int|float $max;
+    private readonly int|float $max;
 
-    public function __construct(int|float $min, int|float $max)
+    public function setParameters(array $parameters): void
     {
-        $this->min = $min;
-        $this->max = $max;
+        $this->min = $parameters[0] ?? throw InvalidRuleException::missingParameter($this->name(), 'min');
+        $this->max = $parameters[1] ?? throw InvalidRuleException::missingParameter($this->name(), 'max');
     }
 
     public function validate(mixed $value): bool

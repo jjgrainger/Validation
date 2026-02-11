@@ -5,6 +5,7 @@ namespace Validation;
 use Validation\Contracts\RegistryContract;
 use Validation\Contracts\RuleContract;
 use Validation\Exceptions\InvalidRuleException;
+use Validation\Rules\Signals\AcceptsParameters;
 
 class Registry implements RegistryContract
 {
@@ -38,6 +39,12 @@ class Registry implements RegistryContract
     {
         $factory = $this->bindings[$name] ?? throw InvalidRuleException::unknown($name);
 
-        return $factory(...$params);
+        $rule = $factory();
+
+        if ($rule instanceof AcceptsParameters) {
+            $rule->setParameters($params);
+        }
+
+        return $rule;
     }
 }

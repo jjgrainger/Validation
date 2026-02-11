@@ -9,8 +9,8 @@ class ConstraintRulesProvider implements ProviderContract
 {
     public function register(RegistryContract $registry): void
     {
-        $registry->add('between', function ($min, $max) {
-            return new \Validation\Rules\Between($min, $max);
+        $registry->add('between', function () {
+            return new \Validation\Rules\Between();
         });
 
         $registry->add('email', function () {
