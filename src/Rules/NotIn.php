@@ -6,9 +6,9 @@ use Validation\Contracts\MessageContract;
 use Validation\Exceptions\InvalidRuleException;
 use Validation\Message;
 use Validation\Rule;
-use Validation\Rules\Signals\AcceptsParameters;
+use Validation\Rules\Signals\RequiresParameters;
 
-class NotIn extends Rule implements AcceptsParameters
+class NotIn extends Rule implements RequiresParameters
 {
     private array $disallowed;
 

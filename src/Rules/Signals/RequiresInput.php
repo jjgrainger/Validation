@@ -4,7 +4,7 @@ namespace Validation\Rules\Signals;
 
 use Validation\Contracts\InputContract;
 
-interface NeedsInput
+interface RequiresInput
 {
     public function setInput(InputContract $input): void;
 }

@@ -4,7 +4,7 @@ use PHPUnit\Framework\TestCase;
 use Validation\Contracts\InputContract;
 use Validation\Exceptions\InvalidRuleException;
 use Validation\Rules\Different;
-use Validation\Rules\Signals\NeedsInput;
+use Validation\Rules\Signals\RequiresInput;
 
 class DifferentTest extends TestCase
 {
@@ -46,7 +46,7 @@ class DifferentTest extends TestCase
     {
         $rule = new Different;
 
-        $this->assertInstanceOf(NeedsInput::class, $rule);
+        $this->assertInstanceOf(RequiresInput::class, $rule);
     }
 
     public function test_it_throws_exception_for_missing_parameters(): void

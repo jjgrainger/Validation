@@ -4,7 +4,7 @@ namespace Validation\Rules\Traits;
 
 use Validation\Contracts\InputContract;
 
-trait AcceptsInput
+trait WithInput
 {
     protected InputContract $input;
 

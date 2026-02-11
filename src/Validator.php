@@ -6,7 +6,7 @@ use Validation\Contracts\FormatterContract;
 use Validation\Contracts\InputContract;
 use Validation\Contracts\ResultContract;
 use Validation\Contracts\StrategyContract;
-use Validation\Rules\Signals\NeedsInput;
+use Validation\Rules\Signals\RequiresInput;
 use Validation\Rules\Signals\SkipsOnFailure;
 use Validation\Rules\Signals\StopsOnFailure;
 
@@ -67,7 +67,7 @@ class Validator
 
             foreach ($values as $attribute => $value) {
                 foreach ($this->strategy->rules($selector) as $rule) {
-                    if ($rule instanceof NeedsInput) {
+                    if ($rule instanceof RequiresInput) {
                         $rule->setInput($input);
                     }
 

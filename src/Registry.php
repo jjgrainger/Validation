@@ -5,7 +5,7 @@ namespace Validation;
 use Validation\Contracts\RegistryContract;
 use Validation\Contracts\RuleContract;
 use Validation\Exceptions\InvalidRuleException;
-use Validation\Rules\Signals\AcceptsParameters;
+use Validation\Rules\Signals\RequiresParameters;
 
 class Registry implements RegistryContract
 {
@@ -41,7 +41,7 @@ class Registry implements RegistryContract
 
         $rule = $factory();
 
-        if ($rule instanceof AcceptsParameters) {
+        if ($rule instanceof RequiresParameters) {
             $rule->setParameters($params);
         }
 

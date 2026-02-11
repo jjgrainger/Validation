@@ -2,7 +2,7 @@
 
 namespace Validation\Rules\Signals;
 
-interface AcceptsParameters
+interface RequiresParameters
 {
     public function setParameters(array $parameters): void;
 }

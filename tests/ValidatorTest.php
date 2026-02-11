@@ -4,7 +4,7 @@ use PHPUnit\Framework\TestCase;
 use Validation\Contracts\InputContract;
 use Validation\Contracts\RuleContract;
 use Validation\Contracts\MessageContract;
-use Validation\Rules\Signals\NeedsInput;
+use Validation\Rules\Signals\RequiresInput;
 use Validation\Rules\Signals\SkipsOnFailure;
 use Validation\Rules\Signals\StopsOnFailure;
 use Validation\Validator;
@@ -130,9 +130,9 @@ class ValidatorTest extends TestCase
 
     public function test_it_can_pass_input_to_rules()
     {
-        $needsInput = $this->createMockForIntersectionOfInterfaces([RuleContract::class, NeedsInput::class]);
+        $RequiresInput = $this->createMockForIntersectionOfInterfaces([RuleContract::class, RequiresInput::class]);
 
-        $needsInput->expects($this->once())
+        $RequiresInput->expects($this->once())
             ->method('setInput')
             ->with($this->isInstanceOf(InputContract::class));
 
@@ -143,7 +143,7 @@ class ValidatorTest extends TestCase
             ->willReturn(true);
 
         $validator = Validator::make([
-            'test' => [$needsInput, $rule],
+            'test' => [$RequiresInput, $rule],
         ]);
 
         $validator->validate([]);

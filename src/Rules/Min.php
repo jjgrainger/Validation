@@ -6,9 +6,9 @@ use Validation\Contracts\MessageContract;
 use Validation\Exceptions\InvalidRuleException;
 use Validation\Message;
 use Validation\Rule;
-use Validation\Rules\Signals\AcceptsParameters;
+use Validation\Rules\Signals\RequiresParameters;
 
-class Min extends Rule implements AcceptsParameters
+class Min extends Rule implements RequiresParameters
 {
     private readonly int|float $min;
 

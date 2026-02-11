@@ -6,13 +6,13 @@ use Validation\Contracts\MessageContract;
 use Validation\Exceptions\InvalidRuleException;
 use Validation\Message;
 use Validation\Rule;
-use Validation\Rules\Signals\AcceptsParameters;
-use Validation\Rules\Signals\NeedsInput;
-use Validation\Rules\Traits\AcceptsInput;
+use Validation\Rules\Signals\RequiresParameters;
+use Validation\Rules\Signals\RequiresInput;
+use Validation\Rules\Traits\WithInput;
 
-class Different extends Rule implements NeedsInput, AcceptsParameters
+class Different extends Rule implements RequiresInput, RequiresParameters
 {
-    use AcceptsInput;
+    use WithInput;
 
     private readonly string $other;
 
