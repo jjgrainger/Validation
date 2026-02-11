@@ -8,7 +8,6 @@ use Validation\Contracts\RegistryContract;
 use Validation\Contracts\RuleContract;
 use Validation\Contracts\StrategyContract;
 use Validation\Contracts\TranslatorContract;
-use Validation\Providers\CoreRulesProvider;
 
 class Factory
 {
@@ -87,7 +86,10 @@ class Factory
         $registry = new Registry;
 
         $providers = [
-            new CoreRulesProvider,
+            new \Validation\Providers\PresenceRulesProvider,
+            new \Validation\Providers\TypeRulesProvider,
+            new \Validation\Providers\ConstraintRulesProvider,
+            new \Validation\Providers\ComparisonRulesProvider,
             ...$config->providers()
         ];
 

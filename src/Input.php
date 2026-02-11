@@ -14,24 +14,33 @@ class Input implements InputContract
     private array $input;
 
     /**
-     * Index of values for selectors.
+     * Resolved values for selectors.
      *
      * @var array<string, mixed>
      */
-    private array $index;
+    private array $values;
+
+    /**
+     * Resolved list of which values exist.
+     *
+     * @var array<string, bool>
+     */
+    private array $exists;
 
     /**
      * Constructor.
      *
-     * @param array<mixed> $input
+     * @param mixed[] $input
      */
     public function __construct(array $input)
     {
         $this->input = $input;
+        $this->values = [];
+        $this->exists = [];
     }
 
     /**
-     * Get a single value from index data by attribute (not selector).
+     * Get a single value by attribute (not selector).
      *
      * @param string $attribute
      * @param mixed $default
@@ -39,7 +48,7 @@ class Input implements InputContract
      */
     public function get(string $attribute, mixed $default = null): mixed
     {
-        return $this->index[$attribute] ?? $default;
+        return $this->values[$attribute] ?? $default;
     }
 
     /**
@@ -50,26 +59,84 @@ class Input implements InputContract
      */
     public function values(string $selector): array
     {
-        return Selector::make($selector)->filter($this->index);
+        $selector = Selector::make($selector);
+        $values = [];
+
+        foreach ($this->values as $key => $value) {
+            if ($selector->matches($key)) {
+                $values[$key] = $value;
+            }
+        }
+
+        return $values;
     }
 
     /**
-     * Build an flat index of resolved selectors and their values.
+     * Check if the attribute existed in the input data.
+     *
+     * @param string $attribute
+     * @return boolean
+     */
+    public function exists(string $attribute): bool
+    {
+        return $this->exists[$attribute] ?? false;
+    }
+
+    /**
+     * Evaluate the input based on the validation selectors.
      *
      * @param string[] $selectors
      * @return void
      */
-    public function index(array $selectors): void
+    public function evaluate(array $selectors): void
     {
-        $result = [];
-
         foreach ($selectors as $selector) {
-            $result = array_merge(
-                $result,
-                Selector::make($selector)->expand($this->input)
-            );
-        }
+            $cursors = [
+                [
+                    'path' => [],
+                    'value' => $this->input,
+                    'exists' => true,
+                ],
+            ];
 
-        $this->index = $result;
+            foreach (Selector::make($selector)->parts() as $part) {
+                $next = [];
+
+                foreach ($cursors as $cursor) {
+                    if (!is_array($cursor['value'])) {
+                        continue;
+                    }
+
+                    if ($part === '*') {
+                        foreach ($cursor['value'] as $key => $child) {
+                            $next[] = [
+                                'path' => [...$cursor['path'], $key],
+                                'value' => $child,
+                                'exists' => true,
+                            ];
+                        }
+
+                        continue;
+                    }
+
+                    $exists = array_key_exists($part, $cursor['value']);
+
+                    $next[] = [
+                        'path'  => [...$cursor['path'], $part],
+                        'value' => $exists ? $cursor['value'][$part] : null,
+                        'exists' => $exists,
+                    ];
+                }
+
+                $cursors = $next;
+            }
+
+            foreach ($cursors as $cursor) {
+                $key = implode('.', $cursor['path']);
+
+                $this->values[$key] = $cursor['value'];
+                $this->exists[$key] = $cursor['exists'];
+            }
+        }
     }
 }

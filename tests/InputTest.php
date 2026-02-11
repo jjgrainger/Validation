@@ -13,7 +13,7 @@ class InputTest extends TestCase
 
         $input = new Input($data);
 
-        $input->index(array_keys($data));
+        $input->evaluate(array_keys($data));
 
         $this->assertSame($data['test'], $input->get('test'));
     }
@@ -30,7 +30,7 @@ class InputTest extends TestCase
 
         $input = new Input($data);
 
-        $input->index([
+        $input->evaluate([
             'test',
             'author.name',
             'author.email',
@@ -53,7 +53,7 @@ class InputTest extends TestCase
 
         $input = new Input($data);
 
-        $input->index([
+        $input->evaluate([
             'title',
             'author.name',
             'author.email',
@@ -91,7 +91,7 @@ class InputTest extends TestCase
 
         $input = new Input($data);
 
-        $input->index([
+        $input->evaluate([
             'post.title',
             'post.author.name',
             'post.related.*.title',
@@ -113,5 +113,48 @@ class InputTest extends TestCase
             ],
             $input->values('post.related.*.tags')
         );
+    }
+
+    public function test_it_can_return_what_values_exist() {
+
+        $data = [
+            'post' => [
+                'title' => 'Post title',
+                'author' => [
+                    'name' => 'Admin',
+                    'email' => 'admin@examaple.com',
+                ],
+                'related' => [
+                    [
+                        'title' => 'Related post title 1',
+                        'url' => 'https://example.com/related-post-1',
+                        'tags' => ['blog', 'news'],
+                    ],
+                    [
+                        'title' => 'Related post title 2',
+                        'tags' => ['news', 'featured', 'announcement'],
+                    ],
+                ]
+            ]
+        ];
+
+        $input = new Input($data);
+
+        $input->evaluate([
+            'post.title',
+            'post.description',
+            'post.author.name',
+            'post.author.avatar',
+            'post.related.*.url',
+        ]);
+
+        $this->assertTrue($input->exists('post.title'));
+        $this->assertFalse($input->exists('post.description'));
+
+        $this->assertTrue($input->exists('post.author.name'));
+        $this->assertFalse($input->exists('post.author.avatar'));
+
+        $this->assertTrue($input->exists('post.related.0.url'));
+        $this->assertFalse($input->exists('post.related.1.url'));
     }
 }

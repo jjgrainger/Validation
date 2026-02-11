@@ -3,14 +3,31 @@
 use PHPUnit\Framework\TestCase;
 use Validation\Contracts\InputContract;
 use Validation\Exceptions\InvalidRuleException;
-use Validation\Rules\Same;
+use Validation\Rules\Different;
 use Validation\Rules\Signals\RequiresInput;
 
-class SameTest extends TestCase
+class DifferentTest extends TestCase
 {
-    public function test_it_passes_value_that_matches(): void
+    public function test_it_passes_valid_value(): void
     {
-        $rule = new Same;
+        $rule = new Different;
+        $rule->setParameters(['other']);
+
+        $input = $this->createMock(InputContract::class);
+
+        $input->expects($this->once())
+            ->method('get')
+            ->with('other')
+            ->willReturn('passes');
+
+        $rule->setInput($input);
+
+        $this->assertTrue($rule->validate('value'));
+    }
+
+    public function test_it_fails_invalid_value(): void
+    {
+        $rule = new Different;
         $rule->setParameters(['other']);
 
         $input = $this->createMock(InputContract::class);
@@ -22,30 +39,12 @@ class SameTest extends TestCase
 
         $rule->setInput($input);
 
-        $this->assertTrue($rule->validate('value'));
-    }
-
-    public function test_it_fails_value_that_does_not_match(): void
-    {
-        $rule = new Same;
-        $rule->setParameters(['other']);
-
-        $input = $this->createMock(InputContract::class);
-
-        $input->expects($this->once())
-            ->method('get')
-            ->with('other')
-            ->willReturn('fails');
-
-        $rule->setInput($input);
-
         $this->assertFalse($rule->validate('value'));
     }
 
     public function test_it_has_needs_input_signal(): void
     {
-        $rule = new Same;
-        $rule->setParameters(['other']);
+        $rule = new Different;
 
         $this->assertInstanceOf(RequiresInput::class, $rule);
     }
@@ -54,13 +53,13 @@ class SameTest extends TestCase
     {
         $this->expectException(InvalidRuleException::class);
 
-        $rule = new Same;
+        $rule = new Different;
         $rule->setParameters([]);
     }
 
     public function test_message_contains_parameters(): void
     {
-        $rule = new Same;
+        $rule = new Different;
         $rule->setParameters(['other']);
 
         $message = $rule->message();
@@ -73,7 +72,7 @@ class SameTest extends TestCase
         );
 
         $this->assertSame(
-            ':attribute must be the same as :other.',
+            ':attribute must not be the same as :other.',
             $message->template()
         );
     }

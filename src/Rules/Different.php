@@ -7,12 +7,14 @@ use Validation\Exceptions\InvalidRuleException;
 use Validation\Message;
 use Validation\Rule;
 use Validation\Rules\Signals\RequiresParameters;
+use Validation\Rules\Signals\RequiresInput;
+use Validation\Rules\Traits\WithInput;
 
-class Between extends Rule implements RequiresParameters
+class Different extends Rule implements RequiresInput, RequiresParameters
 {
-    private int|float $min;
+    use WithInput;
 
-    private int|float $max;
+    private string $other;
 
     /**
      * Set parameters
@@ -22,22 +24,20 @@ class Between extends Rule implements RequiresParameters
      */
     public function setParameters(array $parameters): void
     {
-        $this->min = $parameters[0] ?? throw InvalidRuleException::missingParameter($this->name(), 'min');
-        $this->max = $parameters[1] ?? throw InvalidRuleException::missingParameter($this->name(), 'max');
+        $this->other = $parameters[0] ?? throw InvalidRuleException::missingParameter($this->name(), 'other');
     }
 
     public function validate(mixed $value): bool
     {
-        return $value > $this->min && $value < $this->max;
+        return $value !== $this->input->get($this->other);
     }
 
     public function message(): MessageContract
     {
         return new Message(
-            ':attribute must be greater than :min and less than :max.',
+            ':attribute must not be the same as :other.',
             [
-                ':min' => $this->min,
-                ':max' => $this->max,
+                ':other' => $this->other,
             ]
         );
     }
