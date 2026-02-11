@@ -21,11 +21,20 @@ interface InputContract
      */
     public function values(string $selector): array;
 
+
     /**
-     * Build an flat index of resolved selectors and their values.
+     * Check if the attribute existed in the input data.
+     *
+     * @param string $attribute
+     * @return boolean
+     */
+    public function exists(string $attribute): bool;
+
+    /**
+     * Evaluate the input based on the validation selectors.
      *
      * @param string[] $selectors
      * @return void
      */
-    public function index(array $selectors): void;
+    public function evaluate(array $selectors): void;
 }

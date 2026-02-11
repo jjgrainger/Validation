@@ -53,7 +53,14 @@ class Result implements ResultContract
      */
     public function get(string $key): array
     {
-        $matched = Selector::make($key)->filter($this->messages);
+        $selector = Selector::make($key);
+        $matched = [];
+
+        foreach ($this->messages as $attribute => $message) {
+            if ($selector->matches($attribute)) {
+                $matched[$attribute] = $message;
+            }
+        }
 
         return array_merge(...array_values($matched)) ?: [];
     }

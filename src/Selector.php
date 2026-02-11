@@ -121,60 +121,6 @@ class Selector implements Stringable
     }
 
     /**
-     * Filter a dataset and return a set where keys match the selector.
-     *
-     * @param array<string, mixed> $data
-     * @return array<string, mixed>
-     */
-    public function filter(array $data): array
-    {
-        $found = [];
-
-        foreach ($data as $key => $value) {
-            if ($this->matches($key)) {
-                $found[$key] = $value;
-            }
-        }
-
-        return $found;
-    }
-
-    /**
-     * Expand a dataset to concrete attributes and values.
-     *
-     * @param mixed[] $data
-     * @return array<string, mixed>
-     */
-    public function expand(array $data): array
-    {
-        $results = ['' => $data];
-
-        foreach ($this->parts() as $segment) {
-            $next = [];
-
-            foreach ($results as $path => $value) {
-                if (!is_array($value)) {
-                    continue;
-                }
-
-                if ($segment === '*') {
-                    foreach ($value as $key => $child) {
-                        $newPath = ltrim($path . '.' . $key, '.');
-                        $next[$newPath] = $child;
-                    }
-                } else {
-                    $newPath = ltrim($path . '.' . $segment, '.');
-                    $next[$newPath] = $value[$segment] ?? null;
-                }
-            }
-
-            $results = $next;
-        }
-
-        return $results;
-    }
-
-    /**
      * Return the selector string.
      *
      * @return string

@@ -104,7 +104,7 @@ class Validator
     {
         $input = $input instanceof InputContract ? $input : new Input($input);
 
-        $input->index($this->strategy->selectors());
+        $input->evaluate($this->strategy->selectors());
 
         return $input;
     }
