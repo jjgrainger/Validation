@@ -8,5 +8,5 @@ interface RuleContract
 
     public function message(): MessageContract;
 
-    public function name(): string;
+    public static function name(): string;
 }

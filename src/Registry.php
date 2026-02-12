@@ -16,15 +16,32 @@ class Registry implements RegistryContract
     private array $bindings = [];
 
     /**
-     * Add a rule to the Registry.
+     * Add a rule by class.
      *
-     * @param string $name
-     * @param callable $callback
+     * @param string $class
      * @return void
      */
-    public function add(string $name, callable $callback): void
+    public function add(string $class): void
     {
-        $this->bindings[$name] = $callback;
+        if (!is_subclass_of($class, RuleContract::class)) {
+            throw InvalidRuleException::invalidRuleClass($class);
+        }
+
+        $this->bindings[$class::name()] = function (...$params) use ($class) {
+            return new $class(...$params);
+        };
+    }
+
+    /**
+     * Bind a rule to the Registry.
+     *
+     * @param string $name
+     * @param callable $factory
+     * @return void
+     */
+    public function bind(string $name, callable $factory): void
+    {
+        $this->bindings[$name] = $factory;
     }
 
     /**
@@ -36,8 +53,8 @@ class Registry implements RegistryContract
      */
     public function resolve(string $name, array $params = []): RuleContract
     {
-        $factory = $this->bindings[$name] ?? throw InvalidRuleException::unknown($name);
+        $binding = $this->bindings[$name] ?? throw InvalidRuleException::unknown($name);
 
-        return $factory(...$params);
+        return $binding(...$params);
     }
 }

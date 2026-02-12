@@ -86,10 +86,7 @@ class Factory
         $registry = new Registry;
 
         $providers = [
-            new \Validation\Providers\PresenceRulesProvider,
-            new \Validation\Providers\TypeRulesProvider,
-            new \Validation\Providers\ConstraintRulesProvider,
-            new \Validation\Providers\ComparisonRulesProvider,
+            new \Validation\Providers\BaseRulesProvider,
             ...$config->providers()
         ];
 

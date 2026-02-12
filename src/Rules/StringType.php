@@ -19,7 +19,7 @@ class StringType extends Rule implements StopsOnFailure
         return new Message(':attribute must be a string.');
     }
 
-    public function name(): string
+    public static function name(): string
     {
         return 'string';
     }

@@ -48,4 +48,15 @@ class InvalidRuleException extends InvalidArgumentException
             )
         );
     }
+
+    public static function invalidRuleClass(string $class): self
+    {
+        return new self(
+            sprintf(
+                'Class [%s] must implement %s.',
+                $class,
+                RuleContract::class
+            )
+        );
+    }
 }
