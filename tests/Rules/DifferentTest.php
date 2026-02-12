@@ -10,8 +10,7 @@ class DifferentTest extends TestCase
 {
     public function test_it_passes_valid_value(): void
     {
-        $rule = new Different;
-        $rule->setParameters(['other']);
+        $rule = new Different('other');
 
         $input = $this->createMock(InputContract::class);
 
@@ -27,8 +26,7 @@ class DifferentTest extends TestCase
 
     public function test_it_fails_invalid_value(): void
     {
-        $rule = new Different;
-        $rule->setParameters(['other']);
+        $rule = new Different('other');
 
         $input = $this->createMock(InputContract::class);
 
@@ -44,23 +42,14 @@ class DifferentTest extends TestCase
 
     public function test_it_has_needs_input_signal(): void
     {
-        $rule = new Different;
+        $rule = new Different('other');
 
         $this->assertInstanceOf(RequiresInput::class, $rule);
     }
 
-    public function test_it_throws_exception_for_missing_parameters(): void
-    {
-        $this->expectException(InvalidRuleException::class);
-
-        $rule = new Different;
-        $rule->setParameters([]);
-    }
-
     public function test_message_contains_parameters(): void
     {
-        $rule = new Different;
-        $rule->setParameters(['other']);
+        $rule = new Different('other');
 
         $message = $rule->message();
 

@@ -7,16 +7,14 @@ class BetweenTest extends TestCase
 {
     public function test_it_passes_value_in_range(): void
     {
-        $rule = new Between;
-        $rule->setParameters([1, 3]);
+        $rule = new Between(1, 3);
 
         $this->assertTrue($rule->validate(2));
     }
 
     public function test_it_fails_value_outside_of_range(): void
     {
-        $rule = new Between;
-        $rule->setParameters([1, 3]);
+        $rule = new Between(1, 3);
 
         $this->assertFalse($rule->validate(0));
         $this->assertFalse($rule->validate(4));
@@ -24,8 +22,7 @@ class BetweenTest extends TestCase
 
     public function test_message_contains_parameters(): void
     {
-        $rule = new Between;
-        $rule->setParameters([1, 3]);
+        $rule = new Between(1, 3);
 
         $message = $rule->message();
 

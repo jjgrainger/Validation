@@ -7,8 +7,7 @@ class MinTest extends TestCase
 {
     public function test_it_passes_valid_value(): void
     {
-        $rule = new Min;
-        $rule->setParameters([3]);
+        $rule = new Min(3);
 
         $this->assertTrue($rule->validate(3));
         $this->assertTrue($rule->validate(4));
@@ -18,8 +17,7 @@ class MinTest extends TestCase
 
     public function test_it_fails_invalid_value(): void
     {
-        $rule = new Min;
-        $rule->setParameters([3]);
+        $rule = new Min(3);
 
         $this->assertFalse($rule->validate(0));
         $this->assertFalse($rule->validate(1));
@@ -30,8 +28,7 @@ class MinTest extends TestCase
 
     public function test_message_contains_parameters(): void
     {
-        $rule = new Min;
-        $rule->setParameters([3]);
+        $rule = new Min(3);
 
         $message = $rule->message();
 
