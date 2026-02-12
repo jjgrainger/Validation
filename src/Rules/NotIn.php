@@ -6,30 +6,28 @@ use Validation\Contracts\MessageContract;
 use Validation\Exceptions\InvalidRuleException;
 use Validation\Message;
 use Validation\Rule;
-use Validation\Rules\Signals\RequiresParameters;
 
-class NotIn extends Rule implements RequiresParameters
+class NotIn extends Rule
 {
     /**
      * Disallowed enum.
      *
-     * @var string[]
+     * @var mixed[]
      */
     private array $disallowed;
 
     /**
-     * Set parameters
+     * Constructor
      *
-     * @param mixed[] $parameters
-     * @return void
+     * @param mixed[] $disallowed
      */
-    public function setParameters(array $parameters): void
+    public function __construct(array $disallowed)
     {
-        if (empty($parameters)) {
+        if (empty($disallowed)) {
             throw InvalidRuleException::missingParameter($this->name(), 'disallowed');
         }
 
-        $this->disallowed = $parameters;
+        $this->disallowed = $disallowed;
     }
 
     public function validate(mixed $value): bool

@@ -3,28 +3,20 @@
 namespace Validation\Rules;
 
 use Validation\Contracts\MessageContract;
-use Validation\Exceptions\InvalidRuleException;
 use Validation\Message;
 use Validation\Rule;
-use Validation\Rules\Signals\RequiresParameters;
 use Validation\Rules\Signals\RequiresInput;
 use Validation\Rules\Traits\WithInput;
 
-class Different extends Rule implements RequiresInput, RequiresParameters
+class Different extends Rule implements RequiresInput
 {
     use WithInput;
 
     private string $other;
 
-    /**
-     * Set parameters
-     *
-     * @param mixed[] $parameters
-     * @return void
-     */
-    public function setParameters(array $parameters): void
+    public function __construct(string $other)
     {
-        $this->other = $parameters[0] ?? throw InvalidRuleException::missingParameter($this->name(), 'other');
+        $this->other = $other;
     }
 
     public function validate(mixed $value): bool

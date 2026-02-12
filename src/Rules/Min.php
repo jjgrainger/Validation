@@ -3,24 +3,16 @@
 namespace Validation\Rules;
 
 use Validation\Contracts\MessageContract;
-use Validation\Exceptions\InvalidRuleException;
 use Validation\Message;
 use Validation\Rule;
-use Validation\Rules\Signals\RequiresParameters;
 
-class Min extends Rule implements RequiresParameters
+class Min extends Rule
 {
     private int|float $min;
 
-    /**
-     * Set parameters
-     *
-     * @param mixed[] $parameters
-     * @return void
-     */
-    public function setParameters(array $parameters): void
+    public function __construct(int|float $min)
     {
-        $this->min = $parameters[0] ?? throw InvalidRuleException::missingParameter($this->name(), 'min');
+        $this->min = $min;
     }
 
     public function validate(mixed $value): bool

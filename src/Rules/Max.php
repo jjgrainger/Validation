@@ -3,24 +3,16 @@
 namespace Validation\Rules;
 
 use Validation\Contracts\MessageContract;
-use Validation\Exceptions\InvalidRuleException;
 use Validation\Message;
 use Validation\Rule;
-use Validation\Rules\Signals\RequiresParameters;
 
-class Max extends Rule implements RequiresParameters
+class Max extends Rule
 {
     private int|float $max;
 
-    /**
-     * Set parameters
-     *
-     * @param mixed[] $parameters
-     * @return void
-     */
-    public function setParameters(array $parameters): void
+    public function __construct(int|float $max)
     {
-        $this->max = $parameters[0] ?? throw InvalidRuleException::missingParameter($this->name(), 'max');
+        $this->max = $max;
     }
 
     public function validate(mixed $value): bool

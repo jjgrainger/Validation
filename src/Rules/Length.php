@@ -3,24 +3,16 @@
 namespace Validation\Rules;
 
 use Validation\Contracts\MessageContract;
-use Validation\Exceptions\InvalidRuleException;
 use Validation\Message;
 use Validation\Rule;
-use Validation\Rules\Signals\RequiresParameters;
 
-class Length extends Rule implements RequiresParameters
+class Length extends Rule
 {
     private int $length;
 
-    /**
-     * Set parameters
-     *
-     * @param mixed[] $parameters
-     * @return void
-     */
-    public function setParameters(array $parameters): void
+    public function __construct(int $length)
     {
-        $this->length = $parameters[0] ?? throw InvalidRuleException::missingParameter($this->name(), 'length');
+        $this->length = $length;
     }
 
     public function validate(mixed $value): bool

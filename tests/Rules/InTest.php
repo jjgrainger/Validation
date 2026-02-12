@@ -8,8 +8,7 @@ class InTest extends TestCase
 {
     public function test_it_passes_valid_value(): void
     {
-        $rule = new In;
-        $rule->setParameters(['accepted', 'values']);
+        $rule = new In(['accepted', 'values']);
 
         $this->assertTrue($rule->validate('accepted'));
         $this->assertTrue($rule->validate('values'));
@@ -17,8 +16,7 @@ class InTest extends TestCase
 
     public function test_it_fails_invalid_value(): void
     {
-        $rule = new In;
-        $rule->setParameters(['accepted', 'values']);
+        $rule = new In(['accepted', 'values']);
 
         $this->assertFalse($rule->validate('other'));
         $this->assertFalse($rule->validate('not valid'));
@@ -28,14 +26,12 @@ class InTest extends TestCase
     {
         $this->expectException(InvalidRuleException::class);
 
-        $rule = new In;
-        $rule->setParameters([]);
+        new In([]);
     }
 
     public function test_message_contains_parameters(): void
     {
-        $rule = new In;
-        $rule->setParameters(['accepted', 'values']);
+        $rule = new In(['accepted', 'values']);
 
         $message = $rule->message();
 
