@@ -18,18 +18,19 @@ class Registry implements RegistryContract
     /**
      * Add a rule by class.
      *
+     * @param string $name
      * @param string $class
      * @return void
      */
-    public function add(string $class): void
+    public function add(string $name, string $class): void
     {
         if (!is_subclass_of($class, RuleContract::class)) {
             throw InvalidRuleException::invalidRuleClass($class);
         }
 
-        $this->bindings[$class::name()] = function (...$params) use ($class) {
+        $this->bind($name, function (...$params) use ($class) {
             return new $class(...$params);
-        };
+        });
     }
 
     /**

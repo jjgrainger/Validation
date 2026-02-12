@@ -7,10 +7,11 @@ interface RegistryContract
     /**
      * Add a rule to the registry by class.
      *
+     * @param string $name
      * @param string $class
      * @return void
      */
-    public function add(string $class): void;
+    public function add(string $name, string $class): void;
 
     /**
      * Bing a rule factory to the Registry.

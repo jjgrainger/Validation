@@ -18,7 +18,7 @@ class ArrayType extends Rule
         return new Message(':attribute must be an array.');
     }
 
-    public static function name(): string
+    public function name(): string
     {
         return 'array';
     }

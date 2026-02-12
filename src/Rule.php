@@ -20,7 +20,7 @@ abstract class Rule implements RuleContract
      *
      * @return string
      */
-    public static function name(): string
+    public function name(): string
     {
         $parts = explode('\\', static::class);
         return lcfirst(end($parts));
