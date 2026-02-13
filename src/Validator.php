@@ -4,7 +4,7 @@ namespace Validation;
 
 use Validation\Contracts\FormatterContract;
 use Validation\Contracts\InputContract;
-use Validation\Contracts\ResultContract;
+use Validation\Contracts\RuleContract;
 use Validation\Contracts\StrategyContract;
 use Validation\Rules\Signals\RequiresAttribute;
 use Validation\Rules\Signals\RequiresInput;
@@ -54,27 +54,20 @@ class Validator
     /**
      * Validate input.
      *
-     * @param InputContract|array<string, mixed> $input
-     * @param ?ResultContract $result
-     * @return ResultContract
+     * @param array<string, mixed> $input
+     * @return Result
      */
-    public function validate(InputContract|array $input, ?ResultContract $result = null): ResultContract
+    public function validate(array $input): Result
     {
         $input = $this->prepareInput($input);
-        $result = $this->prepareResult($result);
+        $result = $this->prepareResult();
 
         foreach ($this->strategy->selectors() as $selector) {
             $values = $input->values($selector);
 
             foreach ($values as $attribute => $value) {
                 foreach ($this->strategy->rules($selector) as $rule) {
-                    if ($rule instanceof RequiresInput) {
-                        $rule->setInput($input);
-                    }
-
-                    if ($rule instanceof RequiresAttribute) {
-                        $rule->setAttribute($attribute);
-                    }
+                    $this->prepareRule($rule, $input, $attribute);
 
                     if ($rule->validate($value)) {
                         continue;
@@ -102,12 +95,12 @@ class Validator
     /**
      * Prepate Input for validation.
      *
-     * @param InputContract|array<string, mixed> $input
+     * @param array<string, mixed> $input
      * @return InputContract
      */
-    private function prepareInput(InputContract|array $input): InputContract
+    private function prepareInput(array $input): InputContract
     {
-        $input = $input instanceof InputContract ? $input : new Input($input);
+        $input = new Input($input);
 
         $input->evaluate($this->strategy->selectors());
 
@@ -117,11 +110,29 @@ class Validator
     /**
      * Prepare Result for validation.
      *
-     * @param ResultContract|null $result
-     * @return ResultContract
+     * @return Result
      */
-    private function prepareResult(?ResultContract $result = null): ResultContract
+    private function prepareResult(): Result
     {
-        return $result ?? new Result;
+        return new Result;
+    }
+
+    /**
+     * Prepare rule for validation.
+     *
+     * @param RuleContract $rule
+     * @return RuleContract
+     */
+    private function prepareRule(RuleContract $rule, InputContract $input, string $attribute): RuleContract
+    {
+        if ($rule instanceof RequiresInput) {
+            $rule->setInput($input);
+        }
+
+        if ($rule instanceof RequiresAttribute) {
+            $rule->setAttribute($attribute);
+        }
+
+        return $rule;
     }
 }
