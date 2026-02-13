@@ -2,16 +2,22 @@
 
 namespace Validation;
 
-use Validation\Contracts\ResultContract;
-
-class Result implements ResultContract
+class Result
 {
     /**
      * Result messages.
      *
-     * @var array<string, array<int, string>>
+     * @var Messages
      */
-    protected array $messages = [];
+    protected Messages $messages;
+
+    /**
+     * Constructor.
+     */
+    public function __construct()
+    {
+        $this->messages = new Messages;
+    }
 
     /**
      * Validation passes.
@@ -20,7 +26,7 @@ class Result implements ResultContract
      */
     public function passes(): bool
     {
-        return empty($this->messages);
+        return $this->messages->isEmpty();
     }
 
     /**
@@ -37,51 +43,20 @@ class Result implements ResultContract
      * Add validation message.
      *
      * @param string $key
-     * @param string $value
+     * @param string $message
      * @return void
      */
-    public function add(string $key, string $value): void
+    public function add(string $key, string $message): void
     {
-        $this->messages[$key][] = $value;
+        $this->messages->add($key, $message);
     }
 
     /**
-     * Get messages for a key.
+     * Returns Messages.
      *
-     * @param string $key
-     * @return string[]
+     * @return Messages
      */
-    public function get(string $key): array
-    {
-        $selector = Selector::make($key);
-        $matched = [];
-
-        foreach ($this->messages as $attribute => $message) {
-            if ($selector->matches($attribute)) {
-                $matched[$attribute] = $message;
-            }
-        }
-
-        return array_merge(...array_values($matched)) ?: [];
-    }
-
-    /**
-     * Return the first message for a key.
-     *
-     * @param string $key
-     * @return string|null
-     */
-    public function first(string $key): ?string
-    {
-        return $this->get($key)[0] ?? null;
-    }
-
-    /**
-     * Returns all messages.
-     *
-     * @return array<string, array<int, string>>
-     */
-    public function all(): array
+    public function messages(): Messages
     {
         return $this->messages;
     }
@@ -96,7 +71,7 @@ class Result implements ResultContract
         return [
             'passes' => $this->passes(),
             'fails' => $this->fails(),
-            'messages' => $this->messages,
+            'messages' => $this->messages->all(),
         ];
     }
 

@@ -77,7 +77,7 @@ class ValidatorTest extends TestCase
         ]);
 
         $this->assertFalse($result->passes());
-        $this->assertEquals('Invalid test.', $result->first('test'));
+        $this->assertEquals('Invalid test.', $result->messages()->first('test'));
     }
 
     public function test_it_stops_on_failure_for_rule()
@@ -101,7 +101,7 @@ class ValidatorTest extends TestCase
         $result = $validator->validate([]);
 
         $this->assertTrue($result->fails());
-        $this->assertCount(1, $result->get('test'));
+        $this->assertCount(1, $result->messages()->get('test'));
     }
 
     public function test_it_skips_on_failure_for_rule()
@@ -125,7 +125,7 @@ class ValidatorTest extends TestCase
         $result = $validator->validate([]);
 
         $this->assertTrue($result->passes());
-        $this->assertEmpty($result->get('test'));
+        $this->assertEmpty($result->messages()->get('test'));
     }
 
     public function test_it_can_pass_input_to_rules()
