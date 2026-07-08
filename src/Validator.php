@@ -4,21 +4,21 @@ namespace Validation;
 
 use Validation\Contracts\FormatterContract;
 use Validation\Contracts\InputContract;
-use Validation\Contracts\RuleContract;
-use Validation\Contracts\StrategyContract;
-use Validation\Rules\Signals\RequiresAttribute;
-use Validation\Rules\Signals\RequiresInput;
-use Validation\Rules\Signals\SkipsOnFailure;
-use Validation\Rules\Signals\StopsOnFailure;
+use Validation\Contracts\ConstraintContract;
+use Validation\Constraints\Signals\RequiresAttribute;
+use Validation\Constraints\Signals\RequiresInput;
+use Validation\Constraints\Signals\SkipsOnFailure;
+use Validation\Constraints\Signals\StopsOnFailure;
+use Validation\Contracts\SchemaContract;
 
 class Validator
 {
     /**
      * Validation Strategy.
      *
-     * @var StrategyContract
+     * @var SchemaContract
      */
-    protected $strategy;
+    protected $schema;
 
     /**
      * Message Formatter
@@ -30,12 +30,12 @@ class Validator
     /**
      * Constructor.
      *
-     * @param StrategyContract $strategy
+     * @param SchemaContract $schema
      * @param FormatterContract $formatter
      */
-    public function __construct(StrategyContract $strategy, FormatterContract $formatter)
+    public function __construct(SchemaContract $schema, FormatterContract $formatter)
     {
-        $this->strategy = $strategy;
+        $this->schema = $schema;
         $this->formatter = $formatter;
     }
 
@@ -60,29 +60,31 @@ class Validator
     public function validate(array $input): Result
     {
         $input = $this->prepareInput($input);
-        $result = $this->prepareResult();
+        $result = new Result;
 
-        foreach ($this->strategy->selectors() as $selector) {
+        foreach ($this->schema->rules() as $rule) {
+            $selector = $rule->selector();
             $values = $input->values($selector);
 
             foreach ($values as $attribute => $value) {
-                foreach ($this->strategy->rules($selector) as $rule) {
-                    $this->prepareRule($rule, $input, $attribute);
+                foreach ($rule->constraints() as $constraint) {
 
-                    if ($rule->validate($value)) {
+                    $constraint->prepare($attribute, $input);
+
+                    if ($constraint->validate($value)) {
                         continue;
                     }
 
-                    if ($rule instanceof SkipsOnFailure) {
+                    if ($constraint instanceof SkipsOnFailure) {
                         break;
                     }
 
                     $result->add(
                         $attribute,
-                        $this->formatter->format($rule->message(), $rule->name(), $selector, $value)
+                        $this->formatter->format($constraint->message(), $constraint->name(), $selector, $value)
                     );
 
-                    if ($rule instanceof StopsOnFailure) {
+                    if ($constraint instanceof StopsOnFailure) {
                         break;
                     }
                 }
@@ -102,37 +104,14 @@ class Validator
     {
         $input = new Input($input);
 
-        $input->evaluate($this->strategy->selectors());
+        $selectors = [];
+
+        foreach ($this->schema->rules() as $rule) {
+            $selectors[] = $rule->selector();
+        }
+
+        $input->evaluate($selectors);
 
         return $input;
-    }
-
-    /**
-     * Prepare Result for validation.
-     *
-     * @return Result
-     */
-    private function prepareResult(): Result
-    {
-        return new Result;
-    }
-
-    /**
-     * Prepare rule for validation.
-     *
-     * @param RuleContract $rule
-     * @return RuleContract
-     */
-    private function prepareRule(RuleContract $rule, InputContract $input, string $attribute): RuleContract
-    {
-        if ($rule instanceof RequiresInput) {
-            $rule->setInput($input);
-        }
-
-        if ($rule instanceof RequiresAttribute) {
-            $rule->setAttribute($attribute);
-        }
-
-        return $rule;
     }
 }

@@ -4,9 +4,7 @@ namespace Validation\Contracts;
 
 interface RuleContract
 {
-    public function validate(mixed $value): bool;
+    public function selector(): string;
 
-    public function message(): MessageContract;
-
-    public function name(): string;
+    public function constraints(): array;
 }

@@ -23,11 +23,11 @@ interface RegistryContract
     public function bind(string $name, callable $callback): void;
 
     /**
-     * Resolve rules to RuleContract object.
+     * Resolve rules to ConstraintContract object.
      *
      * @param string $name
      * @param mixed[] $params
-     * @return RuleContract
+     * @return ConstraintContract
      */
-    public function resolve(string $name, array $params = []): RuleContract;
+    public function resolve(string $name, array $params = []): ConstraintContract;
 }

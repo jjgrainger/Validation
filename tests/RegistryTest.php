@@ -1,16 +1,16 @@
 <?php
 
 use PHPUnit\Framework\TestCase;
-use Validation\Contracts\RuleContract;
-use Validation\Exceptions\InvalidRuleException;
+use Validation\Contracts\ConstraintContract;
+use Validation\Exceptions\InvalidConstraintException;
 use Validation\Registry;
-use Validation\Rule;
+use Validation\Constraint;
 
 class RegistryTest extends TestCase
 {
     public function test_it_adds_rule_with_class(): void
     {
-        $rule = new class extends Rule {
+        $rule = new class extends Constraint {
             public function validate(mixed $value): bool { return true; }
         };
 
@@ -20,12 +20,12 @@ class RegistryTest extends TestCase
         $resolved = $registry->resolve('rule', []);
 
         $this->assertInstanceOf($rule::class, $resolved);
-        $this->assertInstanceOf(RuleContract::class, $resolved);
+        $this->assertInstanceOf(ConstraintContract::class, $resolved);
     }
 
     public function test_it_adds_rule_with_factory(): void
     {
-        $rule = new class extends Rule {
+        $rule = new class extends Constraint {
             public function validate(mixed $value): bool { return true; }
         };
 
@@ -42,7 +42,7 @@ class RegistryTest extends TestCase
     public function test_it_passes_parameters_to_rule_constructor(): void
     {
         $registry = new Registry;
-        $registry->bind('rule', fn($first, $second) => new class($first, $second) extends Rule {
+        $registry->bind('rule', fn($first, $second) => new class($first, $second) extends Constraint {
             public array $params;
             public function __construct($first, $second) {
                 $this->params = [$first, $second];
@@ -58,7 +58,7 @@ class RegistryTest extends TestCase
 
     public function test_it_throws_exception_for_invalid_class(): void
     {
-        $this->expectException(InvalidRuleException::class);
+        $this->expectException(InvalidConstraintException::class);
 
         $registry = new Registry;
         $registry->add('rule', stdClass::class);
