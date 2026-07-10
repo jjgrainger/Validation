@@ -4,7 +4,6 @@ namespace Validation;
 
 use Validation\Contracts\ConfigurationContract;
 use Validation\Contracts\ProviderContract;
-use Validation\Contracts\ResolverContract;
 use Validation\Contracts\TranslatorContract;
 
 class Configuration implements ConfigurationContract
