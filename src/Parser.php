@@ -2,16 +2,16 @@
 
 namespace Validation;
 
-use Validation\Contracts\ConstraintContract;
+use Validation\Contracts\AssertionContract;
 use Validation\Contracts\RegistryContract;
 use Validation\Contracts\SchemaContract;
-use Validation\Exceptions\InvalidConstraintException;
-use Validation\Exceptions\InvalidConstraintListException;
+use Validation\Exceptions\InvalidAssertionException;
+use Validation\Exceptions\InvalidAssertionListException;
 
 class Parser
 {
     /**
-     * Constraint Registry.
+     * Assertion Registry.
      *
      * @var RegistryContract
      */
@@ -31,10 +31,10 @@ class Parser
     {
         $rules = [];
 
-        foreach ($definition as $selector => $constraints) {
+        foreach ($definition as $selector => $assertions) {
             $rules[] = new Rule(
                 selector: $this->parseSelector($selector),
-                constraints: $this->parseConstraints($constraints)
+                assertions: $this->parseAssertions($assertions)
             );
         }
 
@@ -46,43 +46,43 @@ class Parser
         return Selector::make($selector);
     }
 
-    private function parseConstraints(mixed $constraints): array
+    private function parseAssertions(mixed $assertions): array
     {
-        $constraints = is_string($constraints) ? explode('|', $constraints) : $constraints;
+        $assertions = is_string($assertions) ? explode('|', $assertions) : $assertions;
 
-        if (! is_array($constraints)) {
-            throw InvalidConstraintListException::invalidType($constraints);
+        if (! is_array($assertions)) {
+            throw InvalidAssertionListException::invalidType($assertions);
         }
 
-        return array_map(function($constraint) {
-            return $this->parseConstraint($constraint);
-        }, $constraints);
+        return array_map(function($assertion) {
+            return $this->parseAssertion($assertion);
+        }, $assertions);
     }
 
     /**
-     * Resolve rules to ConstraintContract objects.
+     * Resolve rules to AssertionContract objects.
      *
-     * @param mixed $constraint
-     * @return ConstraintContract
+     * @param mixed $assertion
+     * @return AssertionContract
      */
-    private function parseConstraint(mixed $constraint): ConstraintContract
+    private function parseAssertion(mixed $assertion): AssertionContract
     {
-        if (is_string($constraint)) {
-            [$name, $params] = array_pad(explode(':', $constraint), 2, null);
+        if (is_string($assertion)) {
+            [$name, $params] = array_pad(explode(':', $assertion), 2, null);
 
             if ($name === null || trim($name) === '') {
-                throw InvalidConstraintException::missingName($constraint);
+                throw InvalidAssertionException::missingName($assertion);
             }
 
             $params = $params ? explode(',', $params) : [];
 
-            $constraint = $this->registry->resolve($name, $params);
+            $assertion = $this->registry->resolve($name, $params);
         }
 
-        if ($constraint instanceof ConstraintContract) {
-            return $constraint;
+        if ($assertion instanceof AssertionContract) {
+            return $assertion;
         }
 
-        throw InvalidConstraintException::invalidType($constraint);
+        throw InvalidAssertionException::invalidType($assertion);
     }
 }

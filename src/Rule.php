@@ -8,12 +8,12 @@ class Rule implements RuleContract
 {
     protected string $selector;
 
-    protected array $constraints;
+    protected array $assertions;
 
-    public function __construct(string $selector, array $constraints = [])
+    public function __construct(string $selector, array $assertions = [])
     {
         $this->selector = $selector;
-        $this->constraints = $constraints;
+        $this->assertions = $assertions;
     }
 
     public function selector(): string
@@ -21,8 +21,8 @@ class Rule implements RuleContract
         return $this->selector;
     }
 
-    public function constraints(): array
+    public function assertions(): array
     {
-        return $this->constraints;
+        return $this->assertions;
     }
 }

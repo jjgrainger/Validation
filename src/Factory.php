@@ -72,7 +72,7 @@ class Factory
         $registry = new Registry;
 
         $providers = [
-            new \Validation\Providers\BaseConstraintsProvider,
+            new \Validation\Providers\BaseAssertionsProvider,
             ...$config->providers()
         ];
 

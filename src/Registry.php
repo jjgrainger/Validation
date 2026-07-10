@@ -3,8 +3,8 @@
 namespace Validation;
 
 use Validation\Contracts\RegistryContract;
-use Validation\Contracts\ConstraintContract;
-use Validation\Exceptions\InvalidConstraintException;
+use Validation\Contracts\AssertionContract;
+use Validation\Exceptions\InvalidAssertionException;
 
 class Registry implements RegistryContract
 {
@@ -24,8 +24,8 @@ class Registry implements RegistryContract
      */
     public function add(string $name, string $class): void
     {
-        if (!is_subclass_of($class, ConstraintContract::class)) {
-            throw InvalidConstraintException::invalidConstraintClass($class);
+        if (!is_subclass_of($class, AssertionContract::class)) {
+            throw InvalidAssertionException::invalidAssertionClass($class);
         }
 
         $this->bind($name, function (...$params) use ($class) {
@@ -50,11 +50,11 @@ class Registry implements RegistryContract
      *
      * @param string $name
      * @param mixed[] $params
-     * @return ConstraintContract
+     * @return AssertionContract
      */
-    public function resolve(string $name, array $params = []): ConstraintContract
+    public function resolve(string $name, array $params = []): AssertionContract
     {
-        $binding = $this->bindings[$name] ?? throw InvalidConstraintException::unknown($name);
+        $binding = $this->bindings[$name] ?? throw InvalidAssertionException::unknown($name);
 
         return $binding(...$params);
     }

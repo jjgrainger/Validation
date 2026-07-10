@@ -3,8 +3,8 @@
 namespace Validation;
 
 use Validation\Contracts\FormatterContract;
-use Validation\Constraints\Signals\SkipsOnFailure;
-use Validation\Constraints\Signals\StopsOnFailure;
+use Validation\Assertions\Signals\SkipsOnFailure;
+use Validation\Assertions\Signals\StopsOnFailure;
 use Validation\Contracts\SchemaContract;
 
 class Validator
@@ -62,29 +62,29 @@ class Validator
             $selector = $rule->selector();
 
             foreach ($input->attributes($selector) as $attribute) {
-                foreach ($rule->constraints() as $constraint) {
+                foreach ($rule->assertions() as $assetion) {
 
-                    $constraint->prepare($attribute, $input);
+                    $assetion->prepare($attribute, $input);
 
-                    if ($constraint->validate($attribute->value())) {
+                    if ($assetion->validate($attribute->value())) {
                         continue;
                     }
 
-                    if ($constraint instanceof SkipsOnFailure) {
+                    if ($assetion instanceof SkipsOnFailure) {
                         break;
                     }
 
                     $result->add(
                         $attribute->key(),
                         $this->formatter->format(
-                            $constraint->message(),
-                            $constraint->name(),
+                            $assetion->message(),
+                            $assetion->name(),
                             $selector,
                             $attribute->value()
                         )
                     );
 
-                    if ($constraint instanceof StopsOnFailure) {
+                    if ($assetion instanceof StopsOnFailure) {
                         break;
                     }
                 }
