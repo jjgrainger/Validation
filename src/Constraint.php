@@ -2,14 +2,25 @@
 
 namespace Validation;
 
+use Validation\Contracts\AttributeContract;
 use Validation\Contracts\MessageContract;
 use Validation\Contracts\ConstraintContract;
 use Validation\Contracts\InputContract;
 
 abstract class Constraint implements ConstraintContract
 {
-    protected string $attribute;
+    /**
+     * Attribute being validated.
+     *
+     * @var AttributeContract
+     */
+    protected AttributeContract $attribute;
 
+    /**
+     * Input being validated.
+     *
+     * @var InputContract
+     */
     protected InputContract $input;
 
     /**
@@ -20,7 +31,14 @@ abstract class Constraint implements ConstraintContract
      */
     abstract public function validate(mixed $value): bool;
 
-    public function prepare(string $attribute, InputContract $input): void {
+    /**
+     * Prepare the constraint.
+     *
+     * @param AttributeContract $attribute
+     * @param InputContract $input
+     * @return void
+     */
+    public function prepare(AttributeContract $attribute, InputContract $input): void {
         $this->attribute = $attribute;
         $this->input = $input;
     }

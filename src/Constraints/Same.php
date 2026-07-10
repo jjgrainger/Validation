@@ -5,13 +5,9 @@ namespace Validation\Constraints;
 use Validation\Contracts\MessageContract;
 use Validation\Message;
 use Validation\Constraint;
-use Validation\Constraints\Signals\RequiresInput;
-use Validation\Constraints\Traits\WithInput;
 
-class Same extends Constraint implements RequiresInput
+class Same extends Constraint
 {
-    use WithInput;
-
     private string $other;
 
     public function __construct(string $other)
@@ -21,7 +17,7 @@ class Same extends Constraint implements RequiresInput
 
     public function validate(mixed $value): bool
     {
-        return $value === $this->input->get($this->other);
+        return $value === $this->input->attribute($this->other)->value();
     }
 
     public function message(): MessageContract

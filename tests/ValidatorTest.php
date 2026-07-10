@@ -96,13 +96,13 @@ class ValidatorTest extends TestCase
             ->method('validate');
 
         $validator = Validator::make([
-            'test' => [$required, $bypassed],
+            'test1' => [$required, $bypassed],
         ]);
 
         $result = $validator->validate([]);
 
         $this->assertTrue($result->fails());
-        $this->assertCount(1, $result->messages()->get('test'));
+        $this->assertCount(1, $result->messages()->get('test1'));
     }
 
     public function test_it_skips_on_failure_for_rule()

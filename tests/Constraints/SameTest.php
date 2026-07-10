@@ -5,6 +5,7 @@ use Validation\Contracts\InputContract;
 use Validation\Exceptions\InvalidConstraintException;
 use Validation\Constraints\Same;
 use Validation\Constraints\Signals\RequiresInput;
+use Validation\Contracts\AttributeContract;
 
 class SameTest extends TestCase
 {
@@ -12,14 +13,20 @@ class SameTest extends TestCase
     {
         $rule = new Same('other');
 
+        $attribute = $this->createMock(AttributeContract::class);
+
+        $attribute->expects($this->once())
+            ->method('value')
+            ->willReturn('value');
+
         $input = $this->createMock(InputContract::class);
 
         $input->expects($this->once())
-            ->method('get')
+            ->method('attribute')
             ->with('other')
-            ->willReturn('value');
+            ->willReturn($attribute);
 
-        $rule->setInput($input);
+        $rule->prepare($attribute, $input);
 
         $this->assertTrue($rule->validate('value'));
     }
@@ -28,23 +35,22 @@ class SameTest extends TestCase
     {
         $rule = new Same('other');
 
+        $attribute = $this->createMock(AttributeContract::class);
+
+        $attribute->expects($this->once())
+            ->method('value')
+            ->willReturn('fails');
+
         $input = $this->createMock(InputContract::class);
 
         $input->expects($this->once())
-            ->method('get')
+            ->method('attribute')
             ->with('other')
-            ->willReturn('fails');
+            ->willReturn($attribute);
 
-        $rule->setInput($input);
+        $rule->prepare($attribute, $input);
 
         $this->assertFalse($rule->validate('value'));
-    }
-
-    public function test_it_has_needs_input_signal(): void
-    {
-        $rule = new Same('other');
-
-        $this->assertInstanceOf(RequiresInput::class, $rule);
     }
 
     public function test_message_contains_parameters(): void

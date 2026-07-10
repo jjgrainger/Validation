@@ -3,10 +3,6 @@
 namespace Validation;
 
 use Validation\Contracts\FormatterContract;
-use Validation\Contracts\InputContract;
-use Validation\Contracts\ConstraintContract;
-use Validation\Constraints\Signals\RequiresAttribute;
-use Validation\Constraints\Signals\RequiresInput;
 use Validation\Constraints\Signals\SkipsOnFailure;
 use Validation\Constraints\Signals\StopsOnFailure;
 use Validation\Contracts\SchemaContract;
@@ -59,19 +55,18 @@ class Validator
      */
     public function validate(array $input): Result
     {
-        $input = $this->prepareInput($input);
+        $input = new Input($input);
         $result = new Result;
 
         foreach ($this->schema->rules() as $rule) {
             $selector = $rule->selector();
-            $values = $input->values($selector);
 
-            foreach ($values as $attribute => $value) {
+            foreach ($input->attributes($selector) as $attribute) {
                 foreach ($rule->constraints() as $constraint) {
 
                     $constraint->prepare($attribute, $input);
 
-                    if ($constraint->validate($value)) {
+                    if ($constraint->validate($attribute->value())) {
                         continue;
                     }
 
@@ -80,8 +75,13 @@ class Validator
                     }
 
                     $result->add(
-                        $attribute,
-                        $this->formatter->format($constraint->message(), $constraint->name(), $selector, $value)
+                        $attribute->key(),
+                        $this->formatter->format(
+                            $constraint->message(),
+                            $constraint->name(),
+                            $selector,
+                            $attribute->value()
+                        )
                     );
 
                     if ($constraint instanceof StopsOnFailure) {
@@ -92,26 +92,5 @@ class Validator
         }
 
         return $result;
-    }
-
-    /**
-     * Prepate Input for validation.
-     *
-     * @param array<string, mixed> $input
-     * @return InputContract
-     */
-    private function prepareInput(array $input): InputContract
-    {
-        $input = new Input($input);
-
-        $selectors = [];
-
-        foreach ($this->schema->rules() as $rule) {
-            $selectors[] = $rule->selector();
-        }
-
-        $input->evaluate($selectors);
-
-        return $input;
     }
 }

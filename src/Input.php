@@ -2,6 +2,7 @@
 
 namespace Validation;
 
+use Validation\Contracts\AttributeContract;
 use Validation\Contracts\InputContract;
 
 class Input implements InputContract
@@ -14,18 +15,11 @@ class Input implements InputContract
     private array $input;
 
     /**
-     * Resolved values for selectors.
+     * Index of all available attributes and their values.
      *
      * @var array<string, mixed>
      */
-    private array $values;
-
-    /**
-     * Resolved list of which values exist.
-     *
-     * @var array<string, bool>
-     */
-    private array $exists;
+    private array $index;
 
     /**
      * Constructor.
@@ -35,108 +29,73 @@ class Input implements InputContract
     public function __construct(array $input)
     {
         $this->input = $input;
-        $this->values = [];
-        $this->exists = [];
+        $this->index = $this->index($input);
     }
 
     /**
-     * Get a single value by attribute (not selector).
+     * Index data to flat map of attributes and values.
      *
-     * @param string $attribute
-     * @param mixed $default
-     * @return mixed
+     * @param array $input
+     * @param string $path
+     * @return array
      */
-    public function get(string $attribute, mixed $default = null): mixed
-    {
-        return $this->values[$attribute] ?? $default;
+    private function index(array $input, string $path = ''): array {
+        $index = [];
+
+        foreach ($input as $key => $value) {
+            $attribute = $path === '' ? (string) $key : "{$path}.{$key}";
+            $index[$attribute] = $value;
+
+            if (is_array($value)) {
+                $index += $this->index($value, $attribute);
+            }
+        }
+
+        return $index;
     }
 
     /**
-     * Return an array of values for a selector.
+     * Get attributes for a selector.
      *
      * @param string $selector
-     * @return array<string, mixed>
+     * @return array
      */
-    public function values(string $selector): array
-    {
+    public function attributes(string $selector): array {
         $selector = Selector::make($selector);
-        $values = [];
+        $attributes = [];
 
-        foreach ($this->values as $key => $value) {
-            if ($selector->matches($key)) {
-                $values[$key] = $value;
+        foreach ($this->index as $attribute => $value) {
+            if ($selector->matches($attribute)) {
+                $attributes[] = new Attribute(
+                    key: $attribute,
+                    value: $value,
+                    exists: true,
+                );
             }
         }
 
-        return $values;
+        if (empty($attributes) && !$selector->hasWildcard()) {
+            $attributes[] = new Attribute(
+                key: $selector->toString(),
+                value: null,
+                exists: false
+            );
+        }
+
+        return $attributes;
     }
 
     /**
-     * Check if the attribute existed in the input data.
+     * Get an attribute for a selector.
      *
      * @param string $attribute
-     * @return boolean
+     * @return AttributeContract
      */
-    public function exists(string $attribute): bool
-    {
-        return $this->exists[$attribute] ?? false;
-    }
-
-    /**
-     * Evaluate the input based on the validation selectors.
-     *
-     * @param string[] $selectors
-     * @return void
-     */
-    public function evaluate(array $selectors): void
-    {
-        foreach ($selectors as $selector) {
-            $cursors = [
-                [
-                    'path' => [],
-                    'value' => $this->input,
-                    'exists' => true,
-                ],
-            ];
-
-            foreach (Selector::make($selector)->parts() as $part) {
-                $next = [];
-
-                foreach ($cursors as $cursor) {
-                    if (!is_array($cursor['value'])) {
-                        continue;
-                    }
-
-                    if ($part === '*') {
-                        foreach ($cursor['value'] as $key => $child) {
-                            $next[] = [
-                                'path' => [...$cursor['path'], $key],
-                                'value' => $child,
-                                'exists' => true,
-                            ];
-                        }
-
-                        continue;
-                    }
-
-                    $exists = array_key_exists($part, $cursor['value']);
-
-                    $next[] = [
-                        'path'  => [...$cursor['path'], $part],
-                        'value' => $exists ? $cursor['value'][$part] : null,
-                        'exists' => $exists,
-                    ];
-                }
-
-                $cursors = $next;
-            }
-
-            foreach ($cursors as $cursor) {
-                $key = implode('.', $cursor['path']);
-
-                $this->values[$key] = $cursor['value'];
-                $this->exists[$key] = $cursor['exists'];
-            }
-        }
+    public function attribute(string $attribute): AttributeContract {
+        return new Attribute(
+            key: $attribute,
+            value: $this->index[$attribute] ?? null,
+            exists: array_key_exists($attribute, $this->index),
+        );
     }
 }

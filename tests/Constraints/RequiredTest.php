@@ -4,22 +4,22 @@ use PHPUnit\Framework\TestCase;
 use Validation\Contracts\InputContract;
 use Validation\Constraints\Required;
 use Validation\Constraints\Signals\StopsOnFailure;
+use Validation\Contracts\AttributeContract;
 
 class RequiredTest extends TestCase
 {
     public function test_it_fails_with_invalid_value(): void
     {
         $rule = new Required;
-        $rule->setAttribute('required');
 
-        $input = $this->createMock(InputContract::class);
+        $input = $this->createStub(InputContract::class);
+        $attribute = $this->createMock(AttributeContract::class);
 
-        $input->expects($this->once())
+        $attribute->expects($this->once())
             ->method('exists')
-            ->with('required')
-            ->willReturn(true);
+            ->willReturn(false);
 
-        $rule->setInput($input);
+        $rule->prepare($attribute, $input);
 
         $this->assertFalse($rule->validate(null));
     }
@@ -27,16 +27,14 @@ class RequiredTest extends TestCase
     public function test_it_fails_with_non_existent_attribute(): void
     {
         $rule = new Required;
-        $rule->setAttribute('required');
+        $input = $this->createStub(InputContract::class);
+        $attribute = $this->createMock(AttributeContract::class);
 
-        $input = $this->createMock(InputContract::class);
-
-        $input->expects($this->once())
+        $attribute->expects($this->once())
             ->method('exists')
-            ->with('required')
             ->willReturn(false);
 
-        $rule->setInput($input);
+        $rule->prepare($attribute, $input);
 
         $this->assertFalse($rule->validate(null));
     }
@@ -44,15 +42,13 @@ class RequiredTest extends TestCase
     public function test_it_passes_non_empty_value(): void
     {
         $rule = new Required;
-        $rule->setAttribute('required');
-
         $input = $this->createStub(InputContract::class);
+        $attribute = $this->createStub(AttributeContract::class);
 
-        $input->method('exists')
-            ->with('required')
+        $attribute->method('exists')
             ->willReturn(true);
 
-        $rule->setInput($input);
+        $rule->prepare($attribute, $input);
 
         $this->assertTrue($rule->validate('value'));
         $this->assertTrue($rule->validate(1));

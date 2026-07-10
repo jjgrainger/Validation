@@ -5,6 +5,7 @@ use Validation\Contracts\InputContract;
 use Validation\Exceptions\InvalidConstraintException;
 use Validation\Constraints\Different;
 use Validation\Constraints\Signals\RequiresInput;
+use Validation\Contracts\AttributeContract;
 
 class DifferentTest extends TestCase
 {
@@ -12,14 +13,20 @@ class DifferentTest extends TestCase
     {
         $rule = new Different('other');
 
+        $attribute = $this->createMock(AttributeContract::class);
+
+        $attribute->expects($this->once())
+            ->method('value')
+            ->willReturn('different');
+
         $input = $this->createMock(InputContract::class);
 
         $input->expects($this->once())
-            ->method('get')
+            ->method('attribute')
             ->with('other')
-            ->willReturn('passes');
+            ->willReturn($attribute);
 
-        $rule->setInput($input);
+        $rule->prepare($attribute, $input);
 
         $this->assertTrue($rule->validate('value'));
     }
@@ -28,23 +35,22 @@ class DifferentTest extends TestCase
     {
         $rule = new Different('other');
 
+        $attribute = $this->createMock(AttributeContract::class);
+
+        $attribute->expects($this->once())
+            ->method('value')
+            ->willReturn('value');
+
         $input = $this->createMock(InputContract::class);
 
         $input->expects($this->once())
-            ->method('get')
+            ->method('attribute')
             ->with('other')
-            ->willReturn('value');
+            ->willReturn($attribute);
 
-        $rule->setInput($input);
+        $rule->prepare($attribute, $input);
 
         $this->assertFalse($rule->validate('value'));
-    }
-
-    public function test_it_has_needs_input_signal(): void
-    {
-        $rule = new Different('other');
-
-        $this->assertInstanceOf(RequiresInput::class, $rule);
     }
 
     public function test_message_contains_parameters(): void
