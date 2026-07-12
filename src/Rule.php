@@ -2,37 +2,54 @@
 
 namespace Validation;
 
-use Validation\Contracts\MessageContract;
+use Validation\Contracts\AssertionContract;
 use Validation\Contracts\RuleContract;
 
-abstract class Rule implements RuleContract
+class Rule implements RuleContract
 {
     /**
-     * Validate input.
+     * Rule selector.
      *
-     * @param mixed $value
-     * @return boolean
+     * @var string
      */
-    abstract public function validate(mixed $value): bool;
+    protected string $selector;
 
     /**
-     * Return the rule name.
+     * Assertions for the rule.
      *
-     * @return string
+     * @var AssertionContract[]
      */
-    public function name(): string
+    protected array $assertions;
+
+    /**
+     * Constructor
+     *
+     * @param string $selector
+     * @param AssertionContract[] $assertions
+     */
+    public function __construct(string $selector, array $assertions = [])
     {
-        $parts = explode('\\', static::class);
-        return lcfirst(end($parts));
+        $this->selector = $selector;
+        $this->assertions = $assertions;
     }
 
     /**
-     * Return the rule message.
+     * Rule selector.
      *
-     * @return MessageContract
+     * @return string
      */
-    public function message(): MessageContract
+    public function selector(): string
     {
-        return new Message('Invalid :attribute.');
+        return $this->selector;
+    }
+
+    /**
+     * Rule Assertions
+     *
+     * @return AssertionContract[]
+     */
+    public function assertions(): array
+    {
+        return $this->assertions;
     }
 }

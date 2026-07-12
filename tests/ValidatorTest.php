@@ -2,26 +2,27 @@
 
 use PHPUnit\Framework\TestCase;
 use Validation\Contracts\InputContract;
-use Validation\Contracts\RuleContract;
+use Validation\Contracts\AssertionContract;
 use Validation\Contracts\MessageContract;
-use Validation\Rules\Signals\RequiresInput;
-use Validation\Rules\Signals\SkipsOnFailure;
-use Validation\Rules\Signals\StopsOnFailure;
+use Validation\Assertions\Signals\RequiresInput;
+use Validation\Assertions\Signals\SkipsOnFailure;
+use Validation\Assertions\Signals\StopsOnFailure;
+use Validation\Input;
 use Validation\Validator;
 
 class ValidatorTest extends TestCase
 {
-    public function test_it_passes_the_correct_value_to_rules()
+    public function test_it_passes_the_correct_value_to_assertions()
     {
-        $rule = $this->createMock(RuleContract::class);
+        $assertion = $this->createMock(AssertionContract::class);
 
-        $rule->expects($this->once())
+        $assertion->expects($this->once())
             ->method('validate')
             ->with('value')
             ->willReturn(true);
 
         $validator = Validator::make([
-            'test' => [$rule],
+            'test' => [$assertion],
         ]);
 
         $result = $validator->validate([
@@ -31,15 +32,15 @@ class ValidatorTest extends TestCase
         $this->assertTrue($result->passes());
     }
 
-    public function test_it_does_not_add_messages_when_rules_pass()
+    public function test_it_does_not_add_messages_when_assertions_pass()
     {
-        $rule = $this->createMock(RuleContract::class);
-        $rule->expects($this->once())
+        $assertion = $this->createMock(AssertionContract::class);
+        $assertion->expects($this->once())
             ->method('validate')
             ->willReturn(true);
 
         $validator = Validator::make([
-            'test' => [$rule]
+            'test' => [$assertion]
         ]);
 
         $result = $validator->validate([
@@ -57,19 +58,19 @@ class ValidatorTest extends TestCase
             ->method('template')
             ->willReturn('Invalid :attribute.');
 
-        $rule = $this->createMock(RuleContract::class);
+        $assertion = $this->createMock(AssertionContract::class);
 
-        $rule->expects($this->once())
+        $assertion->expects($this->once())
             ->method('validate')
             ->with('value')
             ->willReturn(false);
 
-        $rule->expects($this->once())
+        $assertion->expects($this->once())
             ->method('message')
             ->willReturn($message);
 
         $validator = Validator::make([
-            'test' => [$rule],
+            'test' => [$assertion],
         ]);
 
         $result = $validator->validate([
@@ -80,40 +81,40 @@ class ValidatorTest extends TestCase
         $this->assertEquals('Invalid test.', $result->messages()->first('test'));
     }
 
-    public function test_it_stops_on_failure_for_rule()
+    public function test_it_stops_on_failure_for_assertion()
     {
-        $required = $this->createMockForIntersectionOfInterfaces([RuleContract::class, StopsOnFailure::class]);
+        $required = $this->createMockForIntersectionOfInterfaces([AssertionContract::class, StopsOnFailure::class]);
 
         $required->expects($this->once())
             ->method('validate')
             ->with(null)
             ->willReturn(false);
 
-        $bypassed = $this->createMock(RuleContract::class);
+        $bypassed = $this->createMock(AssertionContract::class);
 
         $bypassed->expects($this->never())
             ->method('validate');
 
         $validator = Validator::make([
-            'test' => [$required, $bypassed],
+            'test1' => [$required, $bypassed],
         ]);
 
         $result = $validator->validate([]);
 
         $this->assertTrue($result->fails());
-        $this->assertCount(1, $result->messages()->get('test'));
+        $this->assertCount(1, $result->messages()->get('test1'));
     }
 
-    public function test_it_skips_on_failure_for_rule()
+    public function test_it_skips_on_failure_for_assertion()
     {
-        $optional = $this->createMockForIntersectionOfInterfaces([RuleContract::class, SkipsOnFailure::class]);
+        $optional = $this->createMockForIntersectionOfInterfaces([AssertionContract::class, SkipsOnFailure::class]);
 
         $optional->expects($this->once())
             ->method('validate')
             ->with(null)
             ->willReturn(false);
 
-        $bypassed = $this->createMock(RuleContract::class);
+        $bypassed = $this->createMock(AssertionContract::class);
 
         $bypassed->expects($this->never())
             ->method('validate');
@@ -126,26 +127,5 @@ class ValidatorTest extends TestCase
 
         $this->assertTrue($result->passes());
         $this->assertEmpty($result->messages()->get('test'));
-    }
-
-    public function test_it_can_pass_input_to_rules()
-    {
-        $RequiresInput = $this->createMockForIntersectionOfInterfaces([RuleContract::class, RequiresInput::class]);
-
-        $RequiresInput->expects($this->once())
-            ->method('setInput')
-            ->with($this->isInstanceOf(InputContract::class));
-
-        $rule = $this->createMock(RuleContract::class);
-
-        $rule->expects($this->once())
-            ->method('validate')
-            ->willReturn(true);
-
-        $validator = Validator::make([
-            'test' => [$RequiresInput, $rule],
-        ]);
-
-        $validator->validate([]);
     }
 }

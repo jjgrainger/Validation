@@ -5,7 +5,7 @@ namespace Validation\Contracts;
 interface RegistryContract
 {
     /**
-     * Add a rule to the registry by class.
+     * Add a assertion to the registry by class.
      *
      * @param string $name
      * @param string $class
@@ -14,7 +14,7 @@ interface RegistryContract
     public function add(string $name, string $class): void;
 
     /**
-     * Bing a rule factory to the Registry.
+     * Bing a assertion factory to the Registry.
      *
      * @param string $name
      * @param callable $callback
@@ -23,11 +23,11 @@ interface RegistryContract
     public function bind(string $name, callable $callback): void;
 
     /**
-     * Resolve rules to RuleContract object.
+     * Resolve assertions to AssertionContract object.
      *
      * @param string $name
      * @param mixed[] $params
-     * @return RuleContract
+     * @return AssertionContract
      */
-    public function resolve(string $name, array $params = []): RuleContract;
+    public function resolve(string $name, array $params = []): AssertionContract;
 }

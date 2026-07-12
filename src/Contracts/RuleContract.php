@@ -4,9 +4,17 @@ namespace Validation\Contracts;
 
 interface RuleContract
 {
-    public function validate(mixed $value): bool;
+    /**
+     * The attribute selector for the rule.
+     *
+     * @return string
+     */
+    public function selector(): string;
 
-    public function message(): MessageContract;
-
-    public function name(): string;
+    /**
+     * Assertion objects to validate against.
+     *
+     * @return AssertionContract[]
+     */
+    public function assertions(): array;
 }

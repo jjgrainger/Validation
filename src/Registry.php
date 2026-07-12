@@ -3,20 +3,20 @@
 namespace Validation;
 
 use Validation\Contracts\RegistryContract;
-use Validation\Contracts\RuleContract;
-use Validation\Exceptions\InvalidRuleException;
+use Validation\Contracts\AssertionContract;
+use Validation\Exceptions\InvalidAssertionException;
 
 class Registry implements RegistryContract
 {
     /**
-     * Array of callables to create rules.
+     * Array of callables to create assertions.
      *
      * @var array<string, callable>
      */
     private array $bindings = [];
 
     /**
-     * Add a rule by class.
+     * Add a assertion by class.
      *
      * @param string $name
      * @param string $class
@@ -24,8 +24,8 @@ class Registry implements RegistryContract
      */
     public function add(string $name, string $class): void
     {
-        if (!is_subclass_of($class, RuleContract::class)) {
-            throw InvalidRuleException::invalidRuleClass($class);
+        if (!is_subclass_of($class, AssertionContract::class)) {
+            throw InvalidAssertionException::invalidAssertionClass($class);
         }
 
         $this->bind($name, function (...$params) use ($class) {
@@ -34,7 +34,7 @@ class Registry implements RegistryContract
     }
 
     /**
-     * Bind a rule to the Registry.
+     * Bind a assertion to the Registry.
      *
      * @param string $name
      * @param callable $factory
@@ -46,15 +46,15 @@ class Registry implements RegistryContract
     }
 
     /**
-     * Resolve to rule with name and params.
+     * Resolve to assertion with name and params.
      *
      * @param string $name
      * @param mixed[] $params
-     * @return RuleContract
+     * @return AssertionContract
      */
-    public function resolve(string $name, array $params = []): RuleContract
+    public function resolve(string $name, array $params = []): AssertionContract
     {
-        $binding = $this->bindings[$name] ?? throw InvalidRuleException::unknown($name);
+        $binding = $this->bindings[$name] ?? throw InvalidAssertionException::unknown($name);
 
         return $binding(...$params);
     }

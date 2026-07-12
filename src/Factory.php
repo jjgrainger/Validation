@@ -5,8 +5,7 @@ namespace Validation;
 use Validation\Contracts\ConfigurationContract;
 use Validation\Contracts\FormatterContract;
 use Validation\Contracts\RegistryContract;
-use Validation\Contracts\RuleContract;
-use Validation\Contracts\StrategyContract;
+use Validation\Contracts\SchemaContract;
 use Validation\Contracts\TranslatorContract;
 
 class Factory
@@ -20,21 +19,8 @@ class Factory
     public static function makeValidator(ConfigurationContract $config): Validator
     {
         return new Validator(
-            self::makeStrategy($config),
+            self::makeSchema($config),
             self::makeFormatter($config)
-        );
-    }
-
-    /**
-     * Make the Validation Strategy from the config.
-     *
-     * @param ConfigurationContract $config
-     * @return StrategyContract
-     */
-    public static function makeStrategy(ConfigurationContract $config): StrategyContract
-    {
-        return new Strategy(
-            self::makePlan($config)
         );
     }
 
@@ -54,14 +40,14 @@ class Factory
     }
 
     /**
-     * Make a validation plan from configuration.
+     * Make a Schema from configuration rules.
      *
      * @param ConfigurationContract $config
-     * @return array<string, RuleContract[]>
+     * @return SchemaContract
      */
-    public static function makePlan(ConfigurationContract $config): array
+    public static function makeSchema(ConfigurationContract $config): SchemaContract
     {
-        return self::makeInterpreter($config)->createPlan($config->rules());
+        return self::makeParser($config)->parse($config->rules());
     }
 
     /**
@@ -86,7 +72,7 @@ class Factory
         $registry = new Registry;
 
         $providers = [
-            new \Validation\Providers\BaseRulesProvider,
+            new \Validation\Providers\BaseAssertionsProvider,
             ...$config->providers()
         ];
 
@@ -98,14 +84,14 @@ class Factory
     }
 
     /**
-     * Make the Interpreter.
+     * Make Parser.
      *
      * @param ConfigurationContract $config
-     * @return Interpreter
+     * @return Parser
      */
-    public static function makeInterpreter(ConfigurationContract $config): Interpreter
+    public static function makeParser(ConfigurationContract $config): Parser
     {
-        return new Interpreter(
+        return new Parser(
             self::makeRegistry($config)
         );
     }
