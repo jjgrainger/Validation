@@ -7,28 +7,28 @@ class LengthTest extends TestCase
 {
     public function test_it_passes_valid_value(): void
     {
-        $rule = new Length(5);
+        $assertion = new Length(5);
 
-        $this->assertTrue($rule->validate('fives'));
-        $this->assertTrue($rule->validate('tests'));
-        $this->assertTrue($rule->validate('three'));
-        $this->assertTrue($rule->validate('     '));
+        $this->assertTrue($assertion->validate('fives'));
+        $this->assertTrue($assertion->validate('tests'));
+        $this->assertTrue($assertion->validate('three'));
+        $this->assertTrue($assertion->validate('     '));
     }
 
     public function test_it_fails_invalid_value(): void
     {
-        $rule = new Length(5);
+        $assertion = new Length(5);
 
-        $this->assertFalse($rule->validate('a'));
-        $this->assertFalse($rule->validate('one'));
-        $this->assertFalse($rule->validate('too long'));
+        $this->assertFalse($assertion->validate('a'));
+        $this->assertFalse($assertion->validate('one'));
+        $this->assertFalse($assertion->validate('too long'));
     }
 
     public function test_message_contains_parameters(): void
     {
-        $rule = new Length(5);
+        $assertion = new Length(5);
 
-        $message = $rule->message();
+        $message = $assertion->message();
 
         $this->assertSame(
             [

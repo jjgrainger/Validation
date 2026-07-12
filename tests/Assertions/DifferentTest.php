@@ -2,16 +2,14 @@
 
 use PHPUnit\Framework\TestCase;
 use Validation\Contracts\InputContract;
-use Validation\Exceptions\InvalidAssertionException;
 use Validation\Assertions\Different;
-use Validation\Assertions\Signals\RequiresInput;
 use Validation\Contracts\AttributeContract;
 
 class DifferentTest extends TestCase
 {
     public function test_it_passes_valid_value(): void
     {
-        $rule = new Different('other');
+        $assertion = new Different('other');
 
         $attribute = $this->createMock(AttributeContract::class);
 
@@ -26,14 +24,14 @@ class DifferentTest extends TestCase
             ->with('other')
             ->willReturn($attribute);
 
-        $rule->prepare($attribute, $input);
+        $assertion->prepare($attribute, $input);
 
-        $this->assertTrue($rule->validate('value'));
+        $this->assertTrue($assertion->validate('value'));
     }
 
     public function test_it_fails_invalid_value(): void
     {
-        $rule = new Different('other');
+        $assertion = new Different('other');
 
         $attribute = $this->createMock(AttributeContract::class);
 
@@ -48,16 +46,16 @@ class DifferentTest extends TestCase
             ->with('other')
             ->willReturn($attribute);
 
-        $rule->prepare($attribute, $input);
+        $assertion->prepare($attribute, $input);
 
-        $this->assertFalse($rule->validate('value'));
+        $this->assertFalse($assertion->validate('value'));
     }
 
     public function test_message_contains_parameters(): void
     {
-        $rule = new Different('other');
+        $assertion = new Different('other');
 
-        $message = $rule->message();
+        $message = $assertion->message();
 
         $this->assertSame(
             [

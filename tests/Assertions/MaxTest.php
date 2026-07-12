@@ -7,29 +7,29 @@ class MaxTest extends TestCase
 {
     public function test_it_passes_valid_value(): void
     {
-        $rule = new Max(3);
+        $assertion = new Max(3);
 
-        $this->assertTrue($rule->validate(0));
-        $this->assertTrue($rule->validate(1));
-        $this->assertTrue($rule->validate(2));
-        $this->assertTrue($rule->validate(3));
-        $this->assertTrue($rule->validate(-999));
+        $this->assertTrue($assertion->validate(0));
+        $this->assertTrue($assertion->validate(1));
+        $this->assertTrue($assertion->validate(2));
+        $this->assertTrue($assertion->validate(3));
+        $this->assertTrue($assertion->validate(-999));
     }
 
     public function test_it_fails_invalid_value(): void
     {
-        $rule = new Max(3);
+        $assertion = new Max(3);
 
-        $this->assertFalse($rule->validate(4));
-        $this->assertFalse($rule->validate(5));
-        $this->assertFalse($rule->validate(999));
+        $this->assertFalse($assertion->validate(4));
+        $this->assertFalse($assertion->validate(5));
+        $this->assertFalse($assertion->validate(999));
     }
 
     public function test_message_contains_parameters(): void
     {
-        $rule = new Max(3);
+        $assertion = new Max(3);
 
-        $message = $rule->message();
+        $message = $assertion->message();
 
         $this->assertSame(
             [

@@ -27,23 +27,35 @@ class Parser
         $this->registry = $registry;
     }
 
-    public function parse(array $definition): SchemaContract
+    /**
+     * Parse rules array to Schema.
+     *
+     * @param array $rules
+     * @return SchemaContract
+     */
+    public function parse(array $rules): SchemaContract
     {
-        $rules = [];
+        $schema = [];
 
-        foreach ($definition as $selector => $assertions) {
-            $rules[] = new Rule(
+        foreach ($rules as $selector => $assertions) {
+            $schema[] = new Rule(
                 selector: $this->parseSelector($selector),
                 assertions: $this->parseAssertions($assertions)
             );
         }
 
-        return new Schema($rules);
+        return new Schema($schema);
     }
 
-    private function parseSelector(string $selector): Selector
+    /**
+     * Parse Selector.
+     *
+     * @param string $selector
+     * @return string
+     */
+    private function parseSelector(string $selector): string
     {
-        return Selector::make($selector);
+        return Selector::make($selector)->toString();
     }
 
     private function parseAssertions(mixed $assertions): array
@@ -60,7 +72,7 @@ class Parser
     }
 
     /**
-     * Resolve rules to AssertionContract objects.
+     * Resolve assertions to AssertionContract objects.
      *
      * @param mixed $assertion
      * @return AssertionContract

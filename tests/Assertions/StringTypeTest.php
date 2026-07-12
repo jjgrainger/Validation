@@ -7,26 +7,26 @@ class StringTypeTest extends TestCase
 {
     public function test_it_passes_valid_value(): void
     {
-        $rule = new StringType;
+        $assertion = new StringType;
 
-        $this->assertTrue($rule->validate(''));
-        $this->assertTrue($rule->validate('string'));
+        $this->assertTrue($assertion->validate(''));
+        $this->assertTrue($assertion->validate('string'));
     }
 
     public function test_it_fails_invalid_value(): void
     {
-        $rule = new StringType;
+        $assertion = new StringType;
 
-        $this->assertFalse($rule->validate(1));
-        $this->assertFalse($rule->validate([]));
-        $this->assertFalse($rule->validate(true));
+        $this->assertFalse($assertion->validate(1));
+        $this->assertFalse($assertion->validate([]));
+        $this->assertFalse($assertion->validate(true));
     }
 
     public function test_it_has_messaage(): void
     {
-        $rule = new StringType;
+        $assertion = new StringType;
 
-        $message = $rule->message();
+        $message = $assertion->message();
 
         $this->assertSame(
             ':attribute must be a string.',
@@ -36,8 +36,8 @@ class StringTypeTest extends TestCase
 
     public function test_it_has_name(): void
     {
-        $rule = new StringType;
+        $assertion = new StringType;
 
-        $this->assertSame('string', $rule->name());
+        $this->assertSame('string', $assertion->name());
     }
 }

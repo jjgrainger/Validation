@@ -44,7 +44,7 @@ abstract class Assertion implements AssertionContract
     }
 
     /**
-     * Return the rule name.
+     * Return the assertion name.
      *
      * @return string
      */
@@ -55,7 +55,7 @@ abstract class Assertion implements AssertionContract
     }
 
     /**
-     * Return the rule message.
+     * Return the assertion message.
      *
      * @return MessageContract
      */

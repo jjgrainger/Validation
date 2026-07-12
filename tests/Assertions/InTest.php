@@ -8,18 +8,18 @@ class InTest extends TestCase
 {
     public function test_it_passes_valid_value(): void
     {
-        $rule = new In(['accepted', 'values']);
+        $assertion = new In(['accepted', 'values']);
 
-        $this->assertTrue($rule->validate('accepted'));
-        $this->assertTrue($rule->validate('values'));
+        $this->assertTrue($assertion->validate('accepted'));
+        $this->assertTrue($assertion->validate('values'));
     }
 
     public function test_it_fails_invalid_value(): void
     {
-        $rule = new In(['accepted', 'values']);
+        $assertion = new In(['accepted', 'values']);
 
-        $this->assertFalse($rule->validate('other'));
-        $this->assertFalse($rule->validate('not valid'));
+        $this->assertFalse($assertion->validate('other'));
+        $this->assertFalse($assertion->validate('not valid'));
     }
 
     public function test_it_throws_exception_for_missing_parameters(): void
@@ -31,9 +31,9 @@ class InTest extends TestCase
 
     public function test_message_contains_parameters(): void
     {
-        $rule = new In(['accepted', 'values']);
+        $assertion = new In(['accepted', 'values']);
 
-        $message = $rule->message();
+        $message = $assertion->message();
 
         $this->assertSame(
             [

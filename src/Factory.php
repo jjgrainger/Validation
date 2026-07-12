@@ -40,7 +40,7 @@ class Factory
     }
 
     /**
-     * Make a validation plan from configuration.
+     * Make a Schema from configuration rules.
      *
      * @param ConfigurationContract $config
      * @return SchemaContract

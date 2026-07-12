@@ -9,14 +9,14 @@ use Validation\Exceptions\InvalidAssertionException;
 class Registry implements RegistryContract
 {
     /**
-     * Array of callables to create rules.
+     * Array of callables to create assertions.
      *
      * @var array<string, callable>
      */
     private array $bindings = [];
 
     /**
-     * Add a rule by class.
+     * Add a assertion by class.
      *
      * @param string $name
      * @param string $class
@@ -34,7 +34,7 @@ class Registry implements RegistryContract
     }
 
     /**
-     * Bind a rule to the Registry.
+     * Bind a assertion to the Registry.
      *
      * @param string $name
      * @param callable $factory
@@ -46,7 +46,7 @@ class Registry implements RegistryContract
     }
 
     /**
-     * Resolve to rule with name and params.
+     * Resolve to assertion with name and params.
      *
      * @param string $name
      * @param mixed[] $params

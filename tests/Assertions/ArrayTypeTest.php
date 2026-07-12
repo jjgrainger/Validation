@@ -7,26 +7,26 @@ class ArrayTypeTest extends TestCase
 {
     public function test_it_passes_valid_value(): void
     {
-        $rule = new ArrayType;
+        $assertion = new ArrayType;
 
-        $this->assertTrue($rule->validate([]));
-        $this->assertTrue($rule->validate([1,2,3]));
+        $this->assertTrue($assertion->validate([]));
+        $this->assertTrue($assertion->validate([1,2,3]));
     }
 
     public function test_it_fails_invalid_value(): void
     {
-        $rule = new ArrayType;
+        $assertion = new ArrayType;
 
-        $this->assertFalse($rule->validate(1));
-        $this->assertFalse($rule->validate('string'));
-        $this->assertFalse($rule->validate(true));
+        $this->assertFalse($assertion->validate(1));
+        $this->assertFalse($assertion->validate('string'));
+        $this->assertFalse($assertion->validate(true));
     }
 
     public function test_it_has_messaage(): void
     {
-        $rule = new ArrayType;
+        $assertion = new ArrayType;
 
-        $message = $rule->message();
+        $message = $assertion->message();
 
         $this->assertSame(
             ':attribute must be an array.',
@@ -36,8 +36,8 @@ class ArrayTypeTest extends TestCase
 
     public function test_it_has_name(): void
     {
-        $rule = new ArrayType;
+        $assertion = new ArrayType;
 
-        $this->assertSame('array', $rule->name());
+        $this->assertSame('array', $assertion->name());
     }
 }

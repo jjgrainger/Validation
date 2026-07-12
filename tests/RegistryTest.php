@@ -8,41 +8,41 @@ use Validation\Assertion;
 
 class RegistryTest extends TestCase
 {
-    public function test_it_adds_rule_with_class(): void
+    public function test_it_adds_assertion_with_class(): void
     {
-        $rule = new class extends Assertion {
+        $assertion = new class extends Assertion {
             public function validate(mixed $value): bool { return true; }
         };
 
         $registry = new Registry;
-        $registry->add('rule', $rule::class);
+        $registry->add('assertion', $assertion::class);
 
-        $resolved = $registry->resolve('rule', []);
+        $resolved = $registry->resolve('assertion', []);
 
-        $this->assertInstanceOf($rule::class, $resolved);
+        $this->assertInstanceOf($assertion::class, $resolved);
         $this->assertInstanceOf(AssertionContract::class, $resolved);
     }
 
-    public function test_it_adds_rule_with_factory(): void
+    public function test_it_adds_assertion_with_factory(): void
     {
-        $rule = new class extends Assertion {
+        $assertion = new class extends Assertion {
             public function validate(mixed $value): bool { return true; }
         };
 
-        $class = $rule::class;
+        $class = $assertion::class;
 
         $registry = new Registry;
-        $registry->bind('rule', fn() => new $class);
+        $registry->bind('assertion', fn() => new $class);
 
-        $resolved = $registry->resolve('rule', []);
+        $resolved = $registry->resolve('assertion', []);
 
-        $this->assertInstanceOf($rule::class, $resolved);
+        $this->assertInstanceOf($assertion::class, $resolved);
     }
 
-    public function test_it_passes_parameters_to_rule_constructor(): void
+    public function test_it_passes_parameters_to_assertion_constructor(): void
     {
         $registry = new Registry;
-        $registry->bind('rule', fn($first, $second) => new class($first, $second) extends Assertion {
+        $registry->bind('assertion', fn($first, $second) => new class($first, $second) extends Assertion {
             public array $params;
             public function __construct($first, $second) {
                 $this->params = [$first, $second];
@@ -51,7 +51,7 @@ class RegistryTest extends TestCase
         });
 
         $params = ['first', 'second'];
-        $resolved = $registry->resolve('rule', $params);
+        $resolved = $registry->resolve('assertion', $params);
 
         $this->assertSame($resolved->params, $params);
     }
@@ -61,6 +61,6 @@ class RegistryTest extends TestCase
         $this->expectException(InvalidAssertionException::class);
 
         $registry = new Registry;
-        $registry->add('rule', stdClass::class);
+        $registry->add('assertion', stdClass::class);
     }
 }

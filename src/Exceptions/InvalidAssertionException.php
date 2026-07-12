@@ -17,34 +17,34 @@ class InvalidAssertionException extends InvalidArgumentException
         );
     }
 
-    public static function missingName(string $rule): self
+    public static function missingName(string $assertion): self
     {
         return new self(
             sprintf(
                 'Assertion "%s" is missing a name.',
-                $rule
+                $assertion
             )
         );
     }
 
-    public static function missingParameter(string $rule, string $parameter): self
+    public static function missingParameter(string $assertion, string $parameter): self
     {
         return new self(
             sprintf(
                 'Assertion "%1$s" is missing a parameter "%2$s".',
-                $rule,
+                $assertion,
                 $parameter
             )
         );
     }
 
-    public static function invalidType(mixed $rule): self
+    public static function invalidType(mixed $assertion): self
     {
         return new self(
             sprintf(
                 'Assertion must be a string or an instance of %s, %s given.',
                 AssertionContract::class,
-                is_object($rule) ? $rule::class : gettype($rule)
+                is_object($assertion) ? $assertion::class : gettype($assertion)
             )
         );
     }

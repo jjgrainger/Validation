@@ -10,7 +10,7 @@ class RequiredTest extends TestCase
 {
     public function test_it_fails_with_invalid_value(): void
     {
-        $rule = new Required;
+        $assertion = new Required;
 
         $input = $this->createStub(InputContract::class);
         $attribute = $this->createMock(AttributeContract::class);
@@ -19,14 +19,14 @@ class RequiredTest extends TestCase
             ->method('exists')
             ->willReturn(false);
 
-        $rule->prepare($attribute, $input);
+        $assertion->prepare($attribute, $input);
 
-        $this->assertFalse($rule->validate(null));
+        $this->assertFalse($assertion->validate(null));
     }
 
     public function test_it_fails_with_non_existent_attribute(): void
     {
-        $rule = new Required;
+        $assertion = new Required;
         $input = $this->createStub(InputContract::class);
         $attribute = $this->createMock(AttributeContract::class);
 
@@ -34,41 +34,41 @@ class RequiredTest extends TestCase
             ->method('exists')
             ->willReturn(false);
 
-        $rule->prepare($attribute, $input);
+        $assertion->prepare($attribute, $input);
 
-        $this->assertFalse($rule->validate(null));
+        $this->assertFalse($assertion->validate(null));
     }
 
     public function test_it_passes_non_empty_value(): void
     {
-        $rule = new Required;
+        $assertion = new Required;
         $input = $this->createStub(InputContract::class);
         $attribute = $this->createStub(AttributeContract::class);
 
         $attribute->method('exists')
             ->willReturn(true);
 
-        $rule->prepare($attribute, $input);
+        $assertion->prepare($attribute, $input);
 
-        $this->assertTrue($rule->validate('value'));
-        $this->assertTrue($rule->validate(1));
-        $this->assertTrue($rule->validate(1.234));
-        $this->assertTrue($rule->validate(true));
-        $this->assertTrue($rule->validate(['value']));
+        $this->assertTrue($assertion->validate('value'));
+        $this->assertTrue($assertion->validate(1));
+        $this->assertTrue($assertion->validate(1.234));
+        $this->assertTrue($assertion->validate(true));
+        $this->assertTrue($assertion->validate(['value']));
     }
 
     public function test_it_has_stop_signal(): void
     {
-        $rule = new Required();
+        $assertion = new Required();
 
-        $this->assertInstanceOf(StopsOnFailure::class, $rule);
+        $this->assertInstanceOf(StopsOnFailure::class, $assertion);
     }
 
     public function test_it_has_a_message(): void
     {
-        $rule = new Required();
+        $assertion = new Required();
 
-        $message = $rule->message();
+        $message = $assertion->message();
 
         $this->assertSame(
             ':attribute is required.',

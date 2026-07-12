@@ -7,30 +7,30 @@ class NumberTest extends TestCase
 {
     public function test_it_passes_valid_value(): void
     {
-        $rule = new Number;
+        $assertion = new Number;
 
-        $this->assertTrue($rule->validate(0));
-        $this->assertTrue($rule->validate(1));
-        $this->assertTrue($rule->validate(0.1));
-        $this->assertTrue($rule->validate(-1));
+        $this->assertTrue($assertion->validate(0));
+        $this->assertTrue($assertion->validate(1));
+        $this->assertTrue($assertion->validate(0.1));
+        $this->assertTrue($assertion->validate(-1));
     }
 
     public function test_it_fails_invalid_value(): void
     {
-        $rule = new Number;
+        $assertion = new Number;
 
-        $this->assertFalse($rule->validate('0'));
-        $this->assertFalse($rule->validate('string'));
-        $this->assertFalse($rule->validate([]));
-        $this->assertFalse($rule->validate(true));
-        $this->assertFalse($rule->validate(null));
+        $this->assertFalse($assertion->validate('0'));
+        $this->assertFalse($assertion->validate('string'));
+        $this->assertFalse($assertion->validate([]));
+        $this->assertFalse($assertion->validate(true));
+        $this->assertFalse($assertion->validate(null));
     }
 
     public function test_it_has_messaage(): void
     {
-        $rule = new Number;
+        $assertion = new Number;
 
-        $message = $rule->message();
+        $message = $assertion->message();
 
         $this->assertSame(
             ':attribute must be a number.',

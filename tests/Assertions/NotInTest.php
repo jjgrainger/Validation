@@ -8,18 +8,18 @@ class NotInTest extends TestCase
 {
     public function test_it_passes_valid_value(): void
     {
-        $rule = new NotIn(['disallowed', 'values']);
+        $assertion = new NotIn(['disallowed', 'values']);
 
-        $this->assertTrue($rule->validate('other'));
-        $this->assertTrue($rule->validate('not valid'));
+        $this->assertTrue($assertion->validate('other'));
+        $this->assertTrue($assertion->validate('not valid'));
     }
 
     public function test_it_fails_invalid_value(): void
     {
-        $rule = new NotIn(['disallowed', 'values']);
+        $assertion = new NotIn(['disallowed', 'values']);
 
-        $this->assertFalse($rule->validate('disallowed'));
-        $this->assertFalse($rule->validate('values'));
+        $this->assertFalse($assertion->validate('disallowed'));
+        $this->assertFalse($assertion->validate('values'));
     }
 
     public function test_it_throws_exception_for_missing_parameters(): void
@@ -31,9 +31,9 @@ class NotInTest extends TestCase
 
     public function test_message_contains_parameters(): void
     {
-        $rule = new NotIn(['disallowed', 'values']);
+        $assertion = new NotIn(['disallowed', 'values']);
 
-        $message = $rule->message();
+        $message = $assertion->message();
 
         $this->assertSame(
             [

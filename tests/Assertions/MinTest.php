@@ -7,30 +7,30 @@ class MinTest extends TestCase
 {
     public function test_it_passes_valid_value(): void
     {
-        $rule = new Min(3);
+        $assertion = new Min(3);
 
-        $this->assertTrue($rule->validate(3));
-        $this->assertTrue($rule->validate(4));
-        $this->assertTrue($rule->validate(5));
-        $this->assertTrue($rule->validate(999));
+        $this->assertTrue($assertion->validate(3));
+        $this->assertTrue($assertion->validate(4));
+        $this->assertTrue($assertion->validate(5));
+        $this->assertTrue($assertion->validate(999));
     }
 
     public function test_it_fails_invalid_value(): void
     {
-        $rule = new Min(3);
+        $assertion = new Min(3);
 
-        $this->assertFalse($rule->validate(0));
-        $this->assertFalse($rule->validate(1));
+        $this->assertFalse($assertion->validate(0));
+        $this->assertFalse($assertion->validate(1));
 
-        $this->assertFalse($rule->validate('2'));
-        $this->assertFalse($rule->validate(null));
+        $this->assertFalse($assertion->validate('2'));
+        $this->assertFalse($assertion->validate(null));
     }
 
     public function test_message_contains_parameters(): void
     {
-        $rule = new Min(3);
+        $assertion = new Min(3);
 
-        $message = $rule->message();
+        $message = $assertion->message();
 
         $this->assertSame(
             [
