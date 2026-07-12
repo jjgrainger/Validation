@@ -5,9 +5,9 @@ namespace Validation\Assertions;
 use Validation\Contracts\MessageContract;
 use Validation\Message;
 use Validation\Assertion;
-use Validation\Assertions\Signals\StopsOnFailure;
+use Validation\Failure;
 
-class Required extends Assertion implements StopsOnFailure
+class Required extends Assertion
 {
     public function validate(mixed $value): bool
     {
@@ -25,5 +25,10 @@ class Required extends Assertion implements StopsOnFailure
     public function message(): MessageContract
     {
         return new Message(':attribute is required.');
+    }
+
+    public function failure(): Failure
+    {
+        return Failure::StopRule;
     }
 }

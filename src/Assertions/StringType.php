@@ -5,9 +5,8 @@ namespace Validation\Assertions;
 use Validation\Message;
 use Validation\Assertion;
 use Validation\Contracts\MessageContract;
-use Validation\Assertions\Signals\StopsOnFailure;
 
-class StringType extends Assertion implements StopsOnFailure
+class StringType extends Assertion
 {
     public function validate(mixed $value): bool
     {

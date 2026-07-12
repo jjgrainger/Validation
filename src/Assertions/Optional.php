@@ -3,9 +3,9 @@
 namespace Validation\Assertions;
 
 use Validation\Assertion;
-use Validation\Assertions\Signals\SkipsOnFailure;
+use Validation\Failure;
 
-class Optional extends Assertion implements SkipsOnFailure
+class Optional extends Assertion
 {
     public function validate(mixed $value): bool
     {
@@ -15,5 +15,10 @@ class Optional extends Assertion implements SkipsOnFailure
     public function message(): never
     {
         throw new \LogicException('Optional does not produce messages.');
+    }
+
+    public function failure(): Failure
+    {
+        return Failure::SkipRule;
     }
 }
