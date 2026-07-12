@@ -38,7 +38,8 @@ abstract class Assertion implements AssertionContract
      * @param InputContract $input
      * @return void
      */
-    public function prepare(AttributeContract $attribute, InputContract $input): void {
+    public function prepare(AttributeContract $attribute, InputContract $input): void
+    {
         $this->attribute = $attribute;
         $this->input = $input;
     }

@@ -63,7 +63,6 @@ class Validator
 
             foreach ($input->attributes($selector) as $attribute) {
                 foreach ($rule->assertions() as $assetion) {
-
                     $assetion->prepare($attribute, $input);
 
                     if ($assetion->validate($attribute->value())) {

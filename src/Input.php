@@ -35,11 +35,12 @@ class Input implements InputContract
     /**
      * Index data to flat map of attributes and values.
      *
-     * @param array $input
+     * @param array<string, mixed> $input
      * @param string $path
-     * @return array
+     * @return array<string, mixed>
      */
-    private function index(array $input, string $path = ''): array {
+    private function index(array $input, string $path = ''): array
+    {
         $index = [];
 
         foreach ($input as $key => $value) {
@@ -58,9 +59,10 @@ class Input implements InputContract
      * Get attributes for a selector.
      *
      * @param string $selector
-     * @return array
+     * @return AttributeContract[]
      */
-    public function attributes(string $selector): array {
+    public function attributes(string $selector): array
+    {
         $selector = Selector::make($selector);
         $attributes = [];
 
@@ -91,11 +93,22 @@ class Input implements InputContract
      * @param string $attribute
      * @return AttributeContract
      */
-    public function attribute(string $attribute): AttributeContract {
+    public function attribute(string $attribute): AttributeContract
+    {
         return new Attribute(
             key: $attribute,
             value: $this->index[$attribute] ?? null,
             exists: array_key_exists($attribute, $this->index),
         );
+    }
+
+    /**
+     * Return the raw input.
+     *
+     * @return array<string, mixed>
+     */
+    public function input(): array
+    {
+        return $this->input;
     }
 }

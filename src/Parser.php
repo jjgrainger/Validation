@@ -30,7 +30,7 @@ class Parser
     /**
      * Parse rules array to Schema.
      *
-     * @param array $rules
+     * @param array<string, mixed> $rules
      * @return SchemaContract
      */
     public function parse(array $rules): SchemaContract
@@ -58,6 +58,12 @@ class Parser
         return Selector::make($selector)->toString();
     }
 
+    /**
+     * Parse assertions list.
+     *
+     * @param mixed $assertions
+     * @return AssertionContract[]
+     */
     private function parseAssertions(mixed $assertions): array
     {
         $assertions = is_string($assertions) ? explode('|', $assertions) : $assertions;
@@ -66,7 +72,7 @@ class Parser
             throw InvalidAssertionListException::invalidType($assertions);
         }
 
-        return array_map(function($assertion) {
+        return array_map(function ($assertion) {
             return $this->parseAssertion($assertion);
         }, $assertions);
     }
