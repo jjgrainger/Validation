@@ -2,7 +2,6 @@
 
 use PHPUnit\Framework\TestCase;
 use Validation\Assertions\Optional;
-use Validation\Assertions\Signals\SkipsOnFailure;
 
 class OptionalTest extends TestCase
 {
@@ -27,13 +26,6 @@ class OptionalTest extends TestCase
         $this->assertTrue($assertion->validate(1.234));
         $this->assertTrue($assertion->validate(true));
         $this->assertTrue($assertion->validate(['value']));
-    }
-
-    public function test_it_has_skip_signal(): void
-    {
-        $assertion = new Optional();
-
-        $this->assertInstanceOf(SkipsOnFailure::class, $assertion);
     }
 
     public function test_it_has_no_message(): void

@@ -64,4 +64,14 @@ abstract class Assertion implements AssertionContract
     {
         return new Message('Invalid :attribute.');
     }
+
+    /**
+     * Return the failure action.
+     *
+     * @return Action
+     */
+    public function onFailure(): Action
+    {
+        return Action::Fail;
+    }
 }

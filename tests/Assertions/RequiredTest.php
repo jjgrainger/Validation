@@ -3,7 +3,6 @@
 use PHPUnit\Framework\TestCase;
 use Validation\Contracts\InputContract;
 use Validation\Assertions\Required;
-use Validation\Assertions\Signals\StopsOnFailure;
 use Validation\Contracts\AttributeContract;
 
 class RequiredTest extends TestCase
@@ -55,13 +54,6 @@ class RequiredTest extends TestCase
         $this->assertTrue($assertion->validate(1.234));
         $this->assertTrue($assertion->validate(true));
         $this->assertTrue($assertion->validate(['value']));
-    }
-
-    public function test_it_has_stop_signal(): void
-    {
-        $assertion = new Required();
-
-        $this->assertInstanceOf(StopsOnFailure::class, $assertion);
     }
 
     public function test_it_has_a_message(): void

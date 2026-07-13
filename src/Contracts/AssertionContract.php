@@ -2,6 +2,8 @@
 
 namespace Validation\Contracts;
 
+use Validation\Action;
+
 interface AssertionContract
 {
     public function validate(mixed $value): bool;
@@ -11,4 +13,6 @@ interface AssertionContract
     public function message(): MessageContract;
 
     public function name(): string;
+
+    public function onFailure(): Action;
 }

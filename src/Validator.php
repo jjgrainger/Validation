@@ -3,8 +3,7 @@
 namespace Validation;
 
 use Validation\Contracts\FormatterContract;
-use Validation\Assertions\Signals\SkipsOnFailure;
-use Validation\Assertions\Signals\StopsOnFailure;
+use Validation\Contracts\PolicyContract;
 use Validation\Contracts\SchemaContract;
 
 class Validator
@@ -15,6 +14,13 @@ class Validator
      * @var SchemaContract
      */
     protected $schema;
+
+    /**
+     * Validation Policy.
+     *
+     * @var PolicyContract
+     */
+    protected $policy;
 
     /**
      * Message Formatter
@@ -29,9 +35,10 @@ class Validator
      * @param SchemaContract $schema
      * @param FormatterContract $formatter
      */
-    public function __construct(SchemaContract $schema, FormatterContract $formatter)
+    public function __construct(SchemaContract $schema, PolicyContract $policy, FormatterContract $formatter)
     {
         $this->schema = $schema;
+        $this->policy = $policy;
         $this->formatter = $formatter;
     }
 
@@ -62,29 +69,35 @@ class Validator
             $selector = $rule->selector();
 
             foreach ($input->attributes($selector) as $attribute) {
-                foreach ($rule->assertions() as $assetion) {
-                    $assetion->prepare($attribute, $input);
+                foreach ($rule->assertions() as $assertion) {
+                    $assertion->prepare($attribute, $input);
 
-                    if ($assetion->validate($attribute->value())) {
+                    if ($assertion->validate($attribute->value())) {
                         continue;
                     }
 
-                    if ($assetion instanceof SkipsOnFailure) {
+                    $action = $this->policy->onFailure($assertion->onFailure());
+
+                    if ($action === Action::SkipRule) {
                         break;
                     }
 
                     $result->add(
                         $attribute->key(),
                         $this->formatter->format(
-                            $assetion->message(),
-                            $assetion->name(),
+                            $assertion->message(),
+                            $assertion->name(),
                             $selector,
                             $attribute->value()
                         )
                     );
 
-                    if ($assetion instanceof StopsOnFailure) {
+                    if ($action === Action::StopRule) {
                         break;
+                    }
+
+                    if ($action === Action::StopValidation) {
+                        break 2;
                     }
                 }
             }

@@ -1,13 +1,9 @@
 <?php
 
 use PHPUnit\Framework\TestCase;
-use Validation\Contracts\InputContract;
+use Validation\Action;
 use Validation\Contracts\AssertionContract;
 use Validation\Contracts\MessageContract;
-use Validation\Assertions\Signals\RequiresInput;
-use Validation\Assertions\Signals\SkipsOnFailure;
-use Validation\Assertions\Signals\StopsOnFailure;
-use Validation\Input;
 use Validation\Validator;
 
 class ValidatorTest extends TestCase
@@ -66,6 +62,10 @@ class ValidatorTest extends TestCase
             ->willReturn(false);
 
         $assertion->expects($this->once())
+            ->method('onFailure')
+            ->willReturn(Action::Fail);
+
+        $assertion->expects($this->once())
             ->method('message')
             ->willReturn($message);
 
@@ -83,12 +83,16 @@ class ValidatorTest extends TestCase
 
     public function test_it_stops_on_failure_for_assertion()
     {
-        $required = $this->createMockForIntersectionOfInterfaces([AssertionContract::class, StopsOnFailure::class]);
+        $required = $this->createMock(AssertionContract::class);
 
         $required->expects($this->once())
             ->method('validate')
             ->with(null)
             ->willReturn(false);
+
+        $required->expects($this->once())
+            ->method('onFailure')
+            ->willReturn(Action::StopRule);
 
         $bypassed = $this->createMock(AssertionContract::class);
 
@@ -96,23 +100,27 @@ class ValidatorTest extends TestCase
             ->method('validate');
 
         $validator = Validator::make([
-            'test1' => [$required, $bypassed],
+            'test' => [$required, $bypassed],
         ]);
 
         $result = $validator->validate([]);
 
         $this->assertTrue($result->fails());
-        $this->assertCount(1, $result->messages()->get('test1'));
+        $this->assertCount(1, $result->messages()->get('test'));
     }
 
     public function test_it_skips_on_failure_for_assertion()
     {
-        $optional = $this->createMockForIntersectionOfInterfaces([AssertionContract::class, SkipsOnFailure::class]);
+        $optional = $this->createMock(AssertionContract::class);
 
         $optional->expects($this->once())
             ->method('validate')
             ->with(null)
             ->willReturn(false);
+
+        $optional->expects($this->once())
+            ->method('onFailure')
+            ->willReturn(Action::SkipRule);
 
         $bypassed = $this->createMock(AssertionContract::class);
 
