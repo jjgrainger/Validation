@@ -1,9 +1,9 @@
 <?php
 
 use PHPUnit\Framework\TestCase;
+use Validation\Action;
 use Validation\Contracts\AssertionContract;
 use Validation\Contracts\MessageContract;
-use Validation\Failure;
 use Validation\Validator;
 
 class ValidatorTest extends TestCase
@@ -62,8 +62,8 @@ class ValidatorTest extends TestCase
             ->willReturn(false);
 
         $assertion->expects($this->once())
-            ->method('failure')
-            ->willReturn(Failure::Fail);
+            ->method('onFailure')
+            ->willReturn(Action::Fail);
 
         $assertion->expects($this->once())
             ->method('message')
@@ -91,8 +91,8 @@ class ValidatorTest extends TestCase
             ->willReturn(false);
 
         $required->expects($this->once())
-            ->method('failure')
-            ->willReturn(Failure::StopRule);
+            ->method('onFailure')
+            ->willReturn(Action::StopRule);
 
         $bypassed = $this->createMock(AssertionContract::class);
 
@@ -100,13 +100,13 @@ class ValidatorTest extends TestCase
             ->method('validate');
 
         $validator = Validator::make([
-            'test1' => [$required, $bypassed],
+            'test' => [$required, $bypassed],
         ]);
 
         $result = $validator->validate([]);
 
         $this->assertTrue($result->fails());
-        $this->assertCount(1, $result->messages()->get('test1'));
+        $this->assertCount(1, $result->messages()->get('test'));
     }
 
     public function test_it_skips_on_failure_for_assertion()
@@ -119,8 +119,8 @@ class ValidatorTest extends TestCase
             ->willReturn(false);
 
         $optional->expects($this->once())
-            ->method('failure')
-            ->willReturn(Failure::SkipRule);
+            ->method('onFailure')
+            ->willReturn(Action::SkipRule);
 
         $bypassed = $this->createMock(AssertionContract::class);
 

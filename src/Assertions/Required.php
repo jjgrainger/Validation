@@ -2,10 +2,10 @@
 
 namespace Validation\Assertions;
 
+use Validation\Action;
 use Validation\Contracts\MessageContract;
 use Validation\Message;
 use Validation\Assertion;
-use Validation\Failure;
 
 class Required extends Assertion
 {
@@ -27,8 +27,8 @@ class Required extends Assertion
         return new Message(':attribute is required.');
     }
 
-    public function failure(): Failure
+    public function onFailure(): Action
     {
-        return Failure::StopRule;
+        return Action::StopRule;
     }
 }

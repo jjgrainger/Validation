@@ -2,8 +2,8 @@
 
 namespace Validation\Assertions;
 
+use Validation\Action;
 use Validation\Assertion;
-use Validation\Failure;
 
 class Optional extends Assertion
 {
@@ -17,8 +17,8 @@ class Optional extends Assertion
         throw new \LogicException('Optional does not produce messages.');
     }
 
-    public function failure(): Failure
+    public function onFailure(): Action
     {
-        return Failure::SkipRule;
+        return Action::SkipRule;
     }
 }

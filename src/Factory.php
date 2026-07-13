@@ -4,9 +4,11 @@ namespace Validation;
 
 use Validation\Contracts\ConfigurationContract;
 use Validation\Contracts\FormatterContract;
+use Validation\Contracts\PolicyContract;
 use Validation\Contracts\RegistryContract;
 use Validation\Contracts\SchemaContract;
 use Validation\Contracts\TranslatorContract;
+use Validation\Policies\StandardPolicy;
 
 class Factory
 {
@@ -20,8 +22,31 @@ class Factory
     {
         return new Validator(
             self::makeSchema($config),
+            self::makePolicy($config),
             self::makeFormatter($config)
         );
+    }
+
+    /**
+     * Make a Schema from configuration rules.
+     *
+     * @param ConfigurationContract $config
+     * @return SchemaContract
+     */
+    public static function makeSchema(ConfigurationContract $config): SchemaContract
+    {
+        return self::makeParser($config)->parse($config->rules());
+    }
+
+    /**
+     * Make the Policy from the config.
+     *
+     * @param ConfigurationContract $config
+     * @return PolicyContract
+     */
+    public static function makePolicy(ConfigurationContract $config): PolicyContract
+    {
+        return $config->policy() ?? new StandardPolicy();
     }
 
     /**
@@ -37,17 +62,6 @@ class Factory
             $config->aliases(),
             self::makeTranslator($config)
         );
-    }
-
-    /**
-     * Make a Schema from configuration rules.
-     *
-     * @param ConfigurationContract $config
-     * @return SchemaContract
-     */
-    public static function makeSchema(ConfigurationContract $config): SchemaContract
-    {
-        return self::makeParser($config)->parse($config->rules());
     }
 
     /**

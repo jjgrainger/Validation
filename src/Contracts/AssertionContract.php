@@ -2,7 +2,7 @@
 
 namespace Validation\Contracts;
 
-use Validation\Failure;
+use Validation\Action;
 
 interface AssertionContract
 {
@@ -14,5 +14,5 @@ interface AssertionContract
 
     public function name(): string;
 
-    public function failure(): Failure;
+    public function onFailure(): Action;
 }

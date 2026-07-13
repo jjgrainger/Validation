@@ -38,4 +38,11 @@ interface ConfigurationContract
      * @return ProviderContract[]
      */
     public function providers(): array;
+
+    /**
+     * Policy.
+     *
+     * @return PolicyContract|null
+     */
+    public function policy(): ?PolicyContract;
 }

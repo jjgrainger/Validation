@@ -2,10 +2,10 @@
 
 namespace Validation;
 
-enum Failure
+enum Action
 {
     /**
-     * Record the failure and continue validating.
+     * Record the failure and continue validating the current rule.
      */
     case Fail;
 

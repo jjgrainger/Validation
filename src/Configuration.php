@@ -3,6 +3,7 @@
 namespace Validation;
 
 use Validation\Contracts\ConfigurationContract;
+use Validation\Contracts\PolicyContract;
 use Validation\Contracts\ProviderContract;
 use Validation\Contracts\TranslatorContract;
 
@@ -44,6 +45,13 @@ class Configuration implements ConfigurationContract
     protected $providers;
 
     /**
+     * Policy
+     *
+     * @var PolicyContract|null
+     */
+    protected $policy;
+
+    /**
      * Constructor.
      *
      * @param array<string, mixed> $rules
@@ -56,6 +64,7 @@ class Configuration implements ConfigurationContract
         $this->aliases = $config['aliases'] ?? [];
         $this->translator = $config['translator'] ?? null;
         $this->providers = $config['providers'] ?? [];
+        $this->policy = $config['policy'] ?? null;
     }
 
     /**
@@ -106,5 +115,15 @@ class Configuration implements ConfigurationContract
     public function providers(): array
     {
         return $this->providers;
+    }
+
+    /**
+     * Policy.
+     *
+     * @return PolicyContract|null
+     */
+    public function policy(): ?PolicyContract
+    {
+        return $this->policy;
     }
 }

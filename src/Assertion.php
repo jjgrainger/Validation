@@ -66,12 +66,12 @@ abstract class Assertion implements AssertionContract
     }
 
     /**
-     * Return the assertion failure.
+     * Return the failure action.
      *
-     * @return Failure
+     * @return Action
      */
-    public function failure(): Failure
+    public function onFailure(): Action
     {
-        return Failure::Fail;
+        return Action::Fail;
     }
 }
