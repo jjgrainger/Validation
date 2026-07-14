@@ -23,7 +23,7 @@ class RegistryTest extends TestCase
         $this->assertInstanceOf(AssertionContract::class, $resolved);
     }
 
-    public function test_it_adds_assertion_with_factory(): void
+    public function test_it_binds_assertion_with_factory(): void
     {
         $assertion = new class extends Assertion {
             public function validate(mixed $value): bool { return true; }
@@ -62,5 +62,13 @@ class RegistryTest extends TestCase
 
         $registry = new Registry;
         $registry->add('assertion', stdClass::class);
+    }
+
+    public function test_it_throws_for_unknown_name()
+    {
+        $this->expectException(InvalidAssertionException::class);
+
+        $registry = new Registry;
+        $registry->resolve('unknown');
     }
 }
