@@ -87,7 +87,7 @@ class Validator
                         $this->formatter->format(
                             $assertion->message(),
                             $assertion->name(),
-                            $selector,
+                            $attribute->key(),
                             $attribute->value()
                         )
                     );
@@ -97,7 +97,7 @@ class Validator
                     }
 
                     if ($action === Action::StopValidation) {
-                        break 2;
+                        break 3;
                     }
                 }
             }

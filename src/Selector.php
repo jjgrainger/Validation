@@ -62,7 +62,7 @@ class Selector implements Stringable
             throw InvalidSelectorException::empty();
         }
 
-        if (!preg_match('/^[A-Za-z0-9.*]+$/', $selector)) {
+        if (!preg_match('/^[A-Za-z0-9_.*]+$/', $selector)) {
             throw InvalidSelectorException::invalidCharacters($selector);
         }
 
