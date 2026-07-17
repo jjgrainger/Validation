@@ -1,6 +1,5 @@
 <?php
 
-use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 use Validation\Exceptions\InvalidSelectorException;
 use Validation\Selector;
@@ -51,22 +50,40 @@ class SelectorTest extends TestCase
         $this->assertFalse($selctor->matches('item'));
     }
 
-    #[DataProvider('invalidSelectors')]
-    public function test_it_throws_exception_for_invalid_selectors(string $selector): void
+    public function test_it_returns_parts()
+    {
+        $selector = new Selector('items.*.name');
+
+        $this->assertEquals(['items', '*', 'name'], $selector->parts());
+    }
+
+    public function test_it_is_nested_selector()
+    {
+        $selector = new Selector('item');
+        $nested = new Selector('items.name');
+
+        $this->assertFalse($selector->isNested());
+        $this->assertTrue($nested->isNested());
+    }
+
+    public function test_it_has_wildcard_selector()
+    {
+        $selector = new Selector('item');
+        $wildcard = new Selector('items.*.name');
+
+        $this->assertFalse($selector->hasWildcard());
+        $this->assertTrue($wildcard->hasWildcard());
+    }
+
+    public function test_it_can_be_cast_to_string()
+    {
+        $this->assertIsString((string) new Selector('items.name'));
+    }
+
+    public function test_it_throws_exception_for_invalid_selector(): void
     {
         $this->expectException(InvalidSelectorException::class);
 
-        Selector::validate($selector);
-    }
-
-    public static function invalidSelectors(): array
-    {
-        return [
-            'empty' => [''],
-            'leading dot' => ['.name'],
-            'trailing dot' => ['name.'],
-            'double dot' => ['user..email'],
-            'invalid wildcard placement' => ['*.name'],
-        ];
+        Selector::make('');
     }
 }

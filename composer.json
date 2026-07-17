@@ -4,7 +4,8 @@
     "license": "MIT",
     "autoload": {
         "psr-4": {
-            "Validation\\": "src/"
+            "Validation\\": "src/",
+            "Tests\\Fixtures\\": "tests/Fixtures/"
         }
     },
     "authors": [

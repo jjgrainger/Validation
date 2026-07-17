@@ -21,9 +21,13 @@ class Selector implements Stringable
      */
     public function __construct(string $selector)
     {
-        self::validate($selector);
+        $selector = self::normalize($selector);
 
-        $this->selector = self::normalize($selector);
+        if ('' === $selector) {
+            throw InvalidSelectorException::empty();
+        }
+
+        $this->selector = $selector;
     }
 
     /**
@@ -46,33 +50,6 @@ class Selector implements Stringable
     public static function normalize(string $selector): string
     {
         return trim($selector);
-    }
-
-    /**
-     * Validate a selector.
-     *
-     * @param string $selector
-     * @return void
-     */
-    public static function validate(string $selector): void
-    {
-        $selector = self::normalize($selector);
-
-        if ('' === $selector) {
-            throw InvalidSelectorException::empty();
-        }
-
-        if (!preg_match('/^[A-Za-z0-9.*]+$/', $selector)) {
-            throw InvalidSelectorException::invalidCharacters($selector);
-        }
-
-        if (str_starts_with($selector, '*') || str_ends_with($selector, '*')) {
-            throw InvalidSelectorException::invalidWildCard($selector);
-        }
-
-        if (str_contains($selector, '..') || str_starts_with($selector, '.') || str_ends_with($selector, '.')) {
-            throw InvalidSelectorException::emptySegments($selector);
-        }
     }
 
     /**

@@ -9,14 +9,14 @@ use Validation\Contracts\TranslatorContract;
 class Formatter implements FormatterContract
 {
     /**
-     * messages.
+     * Custom messages.
      *
      * @var array<string, string>
      */
     protected $messages;
 
     /**
-     * aliases.
+     * Custom aliases.
      *
      * @var array<string, string>
      */
@@ -47,20 +47,24 @@ class Formatter implements FormatterContract
      * Format the message.
      *
      * @param MessageContract $message
-     * @param string $key
+     * @param string $assertion
      * @param string $attribute
      * @return string
      */
-    public function format(MessageContract $message, string $key, string $attribute, mixed $value): string
+    public function format(MessageContract $message, string $assertion, string $attribute, mixed $value): string
     {
         $template = $this->translator->translate(
-            $this->messages[$attribute . '.' . $key] ?? $this->messages[$key] ?? $message->template()
+            $this->message($message, $attribute, $assertion)
         );
 
+        $bindings = array_map(function ($replacement) {
+            return $this->alias($replacement);
+        }, $message->bindings());
+
         $bindings = array_merge(
-            $message->bindings(),
+            $bindings,
             [
-                ':attribute' => $this->aliases[$attribute] ?? $attribute,
+                ':attribute' => $this->alias($attribute),
                 ':value' => $value,
             ]
         );
@@ -70,5 +74,51 @@ class Formatter implements FormatterContract
             array_values($bindings),
             $template
         );
+    }
+
+    /**
+     * Resolve message string.
+     *
+     * @param MessageContract $message
+     * @param string $attribute
+     * @param string $assertion
+     * @return string
+     */
+    private function message(MessageContract $message, string $attribute, string $assertion): string
+    {
+        $combined = $attribute . '.' . $assertion;
+
+        if (isset($this->messages[$combined])) {
+            return $this->messages[$combined];
+        }
+
+        foreach ($this->messages as $selector => $template) {
+            if (Selector::make($selector)->matches($combined)) {
+                return $template;
+            }
+        }
+
+        return $this->messages[$assertion] ?? $message->template();
+    }
+
+    /**
+     * Resolve the attribute alias.
+     *
+     * @param string $attribute
+     * @return string
+     */
+    private function alias(string $attribute): string
+    {
+        if (isset($this->aliases[$attribute])) {
+            return $this->aliases[$attribute];
+        }
+
+        foreach ($this->aliases as $selector => $alias) {
+            if (Selector::make($selector)->matches($attribute)) {
+                return $alias;
+            }
+        }
+
+        return $attribute;
     }
 }

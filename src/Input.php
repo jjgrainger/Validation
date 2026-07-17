@@ -2,6 +2,7 @@
 
 namespace Validation;
 
+use InvalidArgumentException;
 use Validation\Contracts\AttributeContract;
 use Validation\Contracts\InputContract;
 
@@ -15,13 +16,6 @@ class Input implements InputContract
     private array $input;
 
     /**
-     * Index of all available attributes and their values.
-     *
-     * @var array<string, mixed>
-     */
-    private array $index;
-
-    /**
      * Constructor.
      *
      * @param mixed[] $input
@@ -29,30 +23,6 @@ class Input implements InputContract
     public function __construct(array $input)
     {
         $this->input = $input;
-        $this->index = $this->index($input);
-    }
-
-    /**
-     * Index data to flat map of attributes and values.
-     *
-     * @param array<string, mixed> $input
-     * @param string $path
-     * @return array<string, mixed>
-     */
-    private function index(array $input, string $path = ''): array
-    {
-        $index = [];
-
-        foreach ($input as $key => $value) {
-            $attribute = $path === '' ? (string) $key : "{$path}.{$key}";
-            $index[$attribute] = $value;
-
-            if (is_array($value)) {
-                $index += $this->index($value, $attribute);
-            }
-        }
-
-        return $index;
     }
 
     /**
@@ -63,42 +33,92 @@ class Input implements InputContract
      */
     public function attributes(string $selector): array
     {
-        $selector = Selector::make($selector);
-        $attributes = [];
+        $branches = [
+            [
+                'path' => '',
+                'value' => $this->input,
+                'exists' => true,
+            ],
+        ];
 
-        foreach ($this->index as $attribute => $value) {
-            if ($selector->matches($attribute)) {
-                $attributes[] = new Attribute(
-                    key: $attribute,
-                    value: $value,
-                    exists: true,
-                );
+        foreach (Selector::make($selector)->parts() as $part) {
+            $next = [];
+
+            foreach ($branches as $state) {
+                $path = $state['path'];
+                $value = $state['value'];
+                $exists = $state['exists'];
+
+                if ('*' === $part) {
+                    if (!$exists || !is_array($value)) {
+                        continue;
+                    }
+
+                    foreach ($value as $key => $child) {
+                        $next[] = [
+                            'path' => ltrim("{$path}.{$key}", '.'),
+                            'value' => $child,
+                            'exists' => true,
+                        ];
+                    }
+
+                    continue;
+                }
+
+                $childPath = ltrim("{$path}.{$part}", '.');
+
+                if (!$exists || !is_array($value)) {
+                    $next[] = [
+                        'path' => $childPath,
+                        'value' => null,
+                        'exists' => false,
+                    ];
+
+                    continue;
+                }
+
+                $exists = array_key_exists($part, $value);
+
+                $next[] = [
+                    'path' => $childPath,
+                    'value' => $exists ? $value[$part] : null,
+                    'exists' => $exists,
+                ];
             }
+
+            $branches = $next;
         }
 
-        if (empty($attributes) && !$selector->hasWildcard()) {
-            $attributes[] = new Attribute(
-                key: $selector->toString(),
-                value: null,
-                exists: false
-            );
-        }
-
-        return $attributes;
+        return array_map(
+            function (array $attribute): AttributeContract {
+                return new Attribute(
+                    key: $attribute['path'],
+                    value: $attribute['value'],
+                    exists: $attribute['exists'],
+                );
+            },
+            $branches
+        );
     }
 
     /**
-     * Get an attribute for a selector.
+     * Get an attribute for a non-wildcard selector.
      *
-     * @param string $attribute
+     * @param string $selector
      * @return AttributeContract
      */
-    public function attribute(string $attribute): AttributeContract
+    public function attribute(string $selector): AttributeContract
     {
-        return new Attribute(
-            key: $attribute,
-            value: $this->index[$attribute] ?? null,
-            exists: array_key_exists($attribute, $this->index),
+        if (Selector::make($selector)->hasWildcard()) {
+            throw new InvalidArgumentException(
+                'A single attribute cannot be retrieved from a selector containing a wildcard.'
+            );
+        }
+
+        return $this->attributes($selector)[0] ?? new Attribute(
+            key: $selector,
+            value: null,
+            exists: false,
         );
     }
 

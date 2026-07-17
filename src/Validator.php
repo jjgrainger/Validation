@@ -9,7 +9,7 @@ use Validation\Contracts\SchemaContract;
 class Validator
 {
     /**
-     * Validation Strategy.
+     * Validation Schema.
      *
      * @var SchemaContract
      */
@@ -66,9 +66,7 @@ class Validator
         $result = new Result;
 
         foreach ($this->schema->rules() as $rule) {
-            $selector = $rule->selector();
-
-            foreach ($input->attributes($selector) as $attribute) {
+            foreach ($input->attributes($rule->selector()) as $attribute) {
                 foreach ($rule->assertions() as $assertion) {
                     $assertion->prepare($attribute, $input);
 
@@ -87,7 +85,7 @@ class Validator
                         $this->formatter->format(
                             $assertion->message(),
                             $assertion->name(),
-                            $selector,
+                            $attribute->key(),
                             $attribute->value()
                         )
                     );
@@ -97,7 +95,7 @@ class Validator
                     }
 
                     if ($action === Action::StopValidation) {
-                        break 2;
+                        break 3;
                     }
                 }
             }
