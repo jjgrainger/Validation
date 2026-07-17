@@ -96,6 +96,17 @@ class InputTest extends TestCase
         $this->assertEmpty($attributes);
     }
 
+    public function test_it_returns_empty_for_null_collection_for_wildcard_selector()
+    {
+        $input = new Input([
+            'users' => null,
+        ]);
+
+        $attributes = $input->attributes('users.*.name');
+
+        $this->assertEmpty($attributes);
+    }
+
     public function test_it_returns_null_attribute_for_missing_key_for_wildcard_selector()
     {
         $input = new Input([
