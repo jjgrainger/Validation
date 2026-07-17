@@ -3,6 +3,7 @@
 use PHPUnit\Framework\TestCase;
 use Validation\Exceptions\InvalidAssertionException;
 use Validation\Assertions\In;
+use Validation\Validator;
 
 class InTest extends TestCase
 {
@@ -45,6 +46,22 @@ class InTest extends TestCase
         $this->assertSame(
             ':attribute must be one of the following values: :allowed.',
             $message->template()
+        );
+    }
+
+    public function test_it_can_validate_values_through_the_validator(): void
+    {
+        $validator = Validator::make([
+            'status' => 'in:draft,publish',
+        ]);
+
+        $result = $validator->validate([
+            'status' => 'pending',
+        ]);
+
+        $this->assertSame(
+            'status must be one of the following values: draft, publish.',
+            $result->messages()->first('status')
         );
     }
 }

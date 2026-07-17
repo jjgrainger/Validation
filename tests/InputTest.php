@@ -88,12 +88,43 @@ class InputTest extends TestCase
     public function test_it_returns_empty_collection_for_non_existing_wildcard_selector()
     {
         $input = new Input([
-            'user' => [],
+            'users' => [],
         ]);
 
         $attributes = $input->attributes('users.*.name');
 
         $this->assertEmpty($attributes);
+    }
+
+    public function test_it_returns_null_attribute_for_missing_key_for_wildcard_selector()
+    {
+        $input = new Input([
+            'users' => [
+                [],
+                null,
+            ],
+        ]);
+
+        $attributes = $input->attributes('users.*.name');
+
+        $this->assertCount(2, $attributes);
+
+        $this->assertEquals('users.0.name', $attributes[0]->key());
+        $this->assertNull($attributes[0]->value());
+        $this->assertFalse($attributes[0]->exists());
+
+        $this->assertEquals('users.1.name', $attributes[1]->key());
+        $this->assertNull($attributes[1]->value());
+        $this->assertFalse($attributes[1]->exists());
+    }
+
+    public function test_it_throws_exception_for_wildcard_selector_on_attribute()
+    {
+        $this->expectException(InvalidArgumentException::class);
+
+        $input = new Input([]);
+
+        $input->attribute('users.*.name');
     }
 
     public function test_it_returns_input()

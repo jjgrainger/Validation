@@ -44,4 +44,9 @@ class NotIn extends Assertion
             ]
         );
     }
+
+    public function name(): string
+    {
+        return 'not_in';
+    }
 }

@@ -3,6 +3,7 @@
 use PHPUnit\Framework\TestCase;
 use Validation\Exceptions\InvalidAssertionException;
 use Validation\Assertions\NotIn;
+use Validation\Validator;
 
 class NotInTest extends TestCase
 {
@@ -45,6 +46,22 @@ class NotInTest extends TestCase
         $this->assertSame(
             ':attribute must not be one of the following values: :disallowed.',
             $message->template()
+        );
+    }
+
+    public function test_it_can_validate_values_through_the_validator(): void
+    {
+        $validator = Validator::make([
+            'status' => 'not_in:draft,publish',
+        ]);
+
+        $result = $validator->validate([
+            'status' => 'draft',
+        ]);
+
+        $this->assertSame(
+            'status must not be one of the following values: draft, publish.',
+            $result->messages()->first('status')
         );
     }
 }

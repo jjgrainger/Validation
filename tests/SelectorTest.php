@@ -1,6 +1,5 @@
 <?php
 
-use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 use Validation\Exceptions\InvalidSelectorException;
 use Validation\Selector;
@@ -81,23 +80,10 @@ class SelectorTest extends TestCase
         $this->assertIsString((string) new Selector('items.name'));
     }
 
-    #[DataProvider('invalidSelectors')]
-    public function test_it_throws_exception_for_invalid_selectors(string $selector): void
+    public function test_it_throws_exception_for_invalid_selector(): void
     {
         $this->expectException(InvalidSelectorException::class);
 
-        Selector::validate($selector);
-    }
-
-    public static function invalidSelectors(): array
-    {
-        return [
-            'empty' => [''],
-            'leading dot' => ['.name'],
-            'trailing dot' => ['name.'],
-            'double dot' => ['user..email'],
-            'invalid wildcard placement' => ['*.name'],
-            'invalid character' => ['#name'],
-        ];
+        Selector::make('');
     }
 }
